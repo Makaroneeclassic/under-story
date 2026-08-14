@@ -12,20 +12,7 @@ function ensureLocalDataFile() {
   }
 
   if (!fs.existsSync(leadsFilePath)) {
-    const initialLeads = [
-      {
-        id: "lead_1786701001",
-        firstName: "กัญญาณัฐ",
-        lastName: "วรโชติ",
-        eventMonth: "พฤศจิกายน 2026",
-        phone: "081-456-7890",
-        notes: "สนใจพิธีหมั้นเช้าและงานเลี้ยงฉลองช่วงเย็น โถง Willow Hall",
-        status: "NEW",
-        visitDate: "",
-        createdAt: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
-      },
-    ];
-    fs.writeFileSync(leadsFilePath, JSON.stringify(initialLeads, null, 2), "utf-8");
+    fs.writeFileSync(leadsFilePath, JSON.stringify([], null, 2), "utf-8");
   }
 }
 
