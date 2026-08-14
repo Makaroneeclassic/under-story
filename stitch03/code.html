@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Understory | Architectural Wedding Venue</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:wght@400;700&amp;family=Work+Sans:wght@400;600&amp;family=DM+Sans:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-surface": "#1b1c1c",
+                    "surface-dim": "#dcd9d9",
+                    "surface-variant": "#e4e2e1",
+                    "secondary-container": "#e2e4d6",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-fixed": "#1d1c14",
+                    "on-error": "#ffffff",
+                    "tertiary-container": "#f4f0e2",
+                    "inverse-primary": "#c8c6c0",
+                    "on-surface-variant": "#474741",
+                    "surface-container-high": "#eae7e7",
+                    "error": "#ba1a1a",
+                    "error-container": "#ffdad6",
+                    "tertiary": "#615e54",
+                    "on-primary": "#ffffff",
+                    "surface-bright": "#fcf9f8",
+                    "surface-container": "#f0eded",
+                    "on-secondary-container": "#63665b",
+                    "tertiary-fixed-dim": "#cac6ba",
+                    "on-tertiary": "#ffffff",
+                    "outline-variant": "#c8c7be",
+                    "on-secondary-fixed": "#1a1d14",
+                    "on-secondary-fixed-variant": "#45483e",
+                    "primary-fixed-dim": "#c8c6c0",
+                    "inverse-surface": "#303030",
+                    "primary-container": "#f2f0e9",
+                    "on-background": "#1b1c1c",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "secondary-fixed-dim": "#c5c8bb",
+                    "surface": "#fcf9f8",
+                    "on-primary-fixed": "#1b1c18",
+                    "inverse-on-surface": "#f3f0f0",
+                    "surface-container-low": "#f6f3f2",
+                    "on-tertiary-fixed-variant": "#49473d",
+                    "on-primary-container": "#6d6d67",
+                    "primary": "#5f5f59",
+                    "secondary-fixed": "#e2e4d6",
+                    "secondary": "#5d6055",
+                    "primary-fixed": "#e4e2dc",
+                    "on-tertiary-container": "#6f6d62",
+                    "outline": "#777770",
+                    "surface-tint": "#5f5f59",
+                    "tertiary-fixed": "#e7e2d5",
+                    "surface-container-highest": "#e4e2e1",
+                    "on-primary-fixed-variant": "#474742",
+                    "background": "#fcf9f8"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "8px",
+                    "gutter": "24px",
+                    "section-gap": "120px",
+                    "margin-mobile": "20px",
+                    "margin-desktop": "80px"
+            },
+            "fontFamily": {
+                    "headline-xl": ["Libre Caslon Text"],
+                    "label-caps": ["Work Sans"],
+                    "headline-lg": ["Libre Caslon Text"],
+                    "body-lg": ["DM Sans"],
+                    "headline-md": ["Libre Caslon Text"],
+                    "headline-lg-mobile": ["Libre Caslon Text"],
+                    "body-md": ["DM Sans"]
+            },
+            "fontSize": {
+                    "headline-xl": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "1.4", "letterSpacing": "0.15em", "fontWeight": "600"}],
+                    "headline-lg": ["40px", {"lineHeight": "1.2", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "1.7", "fontWeight": "400"}],
+                    "headline-md": ["28px", {"lineHeight": "1.3", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .reveal { opacity: 0; transform: translateY(20px); transition: all 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        .circular-frame { shape-outside: circle(50%); border-radius: 50%; }
+        .shadow-ambient { box-shadow: 0 10px 30px -10px rgba(95, 95, 89, 0.08); }
+        .ghost-border { border: 1px solid #D1CDC0; }
+        
+        /* Custom logo font styling to match image */
+        .brand-logo-font {
+            letter-spacing: 0.4em;
+            font-weight: 300;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md selection:bg-secondary-container">
+<!-- TopAppBar -->
+<header class="docked full-width top-0 sticky z-50 bg-surface/80 dark:bg-on-surface/80 backdrop-blur-md border-b border-outline-variant/30 flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-primary hover:bg-tertiary-container/20 transition-colors duration-300 p-2 rounded-lg" id="menu-toggle">menu</button>
+<nav class="hidden md:flex gap-8 ml-8">
+<a class="font-label-caps text-label-caps text-primary dark:text-primary-fixed font-bold border-b-2 border-primary py-1 tracking-widest" href="#">THE VENUE</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors tracking-widest" href="#">HALLS</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors tracking-widest" href="#">PHILOSOPHY</a>
+</nav>
+</div>
+<div class="absolute left-1/2 -translate-x-1/2">
+<span class="font-headline-md text-headline-md tracking-widest text-on-surface dark:text-surface-bright uppercase brand-logo-font">UNDERSTORY</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="hidden md:block font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors mr-4">PRESS KIT</button>
+<button class="bg-on-surface text-surface py-2 px-6 rounded-lg font-label-caps text-label-caps tracking-widest scale-95 active:scale-90 transition-transform">RESERVE</button>
+</div>
+</header>
+<!-- Navigation Drawer (Side) -->
+<div class="fixed inset-0 z-[60] bg-on-surface/20 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-500" id="side-drawer">
+<aside class="fixed inset-y-0 left-0 z-[60] flex flex-col bg-surface dark:bg-inverse-surface h-full w-80 rounded-r-xl shadow-sm -translate-x-full transition-transform duration-500">
+<div class="p-8 flex justify-between items-center border-b border-outline-variant/30">
+<span class="font-headline-md text-headline-md text-on-surface">Understory</span>
+<button class="material-symbols-outlined text-primary" onclick="toggleDrawer()">close</button>
+</div>
+<nav class="flex-1 py-8">
+<div class="space-y-2">
+<a class="bg-primary-container text-on-primary-container rounded-lg mx-2 flex items-center gap-4 px-4 py-3 font-body-lg text-body-lg" href="#">
+<span class="material-symbols-outlined">architecture</span>
+                        The Venue
+                    </a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high transition-all mx-2 flex items-center gap-4 px-4 py-3 font-body-lg text-body-lg" href="#">
+<span class="material-symbols-outlined">account_balance</span>
+                        Halls
+                    </a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high transition-all mx-2 flex items-center gap-4 px-4 py-3 font-body-lg text-body-lg" href="#">
+<span class="material-symbols-outlined">nature_people</span>
+                        Philosophy
+                    </a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high transition-all mx-2 flex items-center gap-4 px-4 py-3 font-body-lg text-body-lg" href="#">
+<span class="material-symbols-outlined">auto_stories</span>
+                        Packages
+                    </a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high transition-all mx-2 flex items-center gap-4 px-4 py-3 font-body-lg text-body-lg" href="#">
+<span class="material-symbols-outlined">mail</span>
+                        Contact
+                    </a>
+</div>
+</nav>
+<div class="p-8 border-t border-outline-variant/30">
+<p class="font-label-caps text-label-caps text-on-surface-variant opacity-60">ESTABLISHED 2024</p>
+</div>
+</aside>
+</div>
+<main>
+<!-- Hero Section -->
+<section class="relative h-[795px] flex items-center justify-center overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover" data-alt="A cinematic, low-angle shot of a majestic circular architectural skylight in a minimalist wedding venue. Soft, warm sunlight streams through the opening, casting dramatic long shadows on textured, vertically-ribbed limestone walls. The atmosphere is serene, high-end, and modern, with a muted beige and charcoal color palette that emphasizes pure geometric forms and quiet luxury." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeTer_P8qLHDk2VVwGy2wsdoR8YwnNMJU4oYOeChSfGYswB39cx240MBnZdo0O65k0mhp-WKzNfKqPKi0rGeJ9-DSJF278OtwW5L4zzYD_r2BX4o2FEGHypJD_68l7QucPDNRPQTb4bRoXR2Gg9lvruo8pi9T0CMsDQlSSsHH_NydFZr2xcjdBoSVMSCYrbMzrNBonJoxP869xQ_8o0tFBfZmcO2ZBBuCliiS9rsh9kZjM8mFYD9ySBdT0vdgvci25A-WllxQ3THla"/>
+<div class="absolute inset-0 bg-on-surface/10"></div>
+</div>
+<div class="relative z-10 text-center text-white reveal active">
+<div class="mb-12 flex justify-center">
+<div class="w-32 h-32 flex items-center justify-center">
+<img class="w-24 h-auto invert brightness-0" data-alt="A minimalist logo design featuring a simple, organic line drawing of an umbrella-shaped canopy tree, styled like a delicate architectural sketch. The lines are clean and thin in a deep charcoal color, set against a pristine, textured cream background that reflects the high-end minimalist brand identity of Understory venue." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxfOtXbgPT2efJJCdBr29f1V0oL0eRa0a4CGbRZadFjL7ZUZKfp0r8TrbsN2nkQyrYPBPXRxwnyn5A8BwG0SekEDOXXlBwuHncvRsCqNpR6Wa-RrjcjE_OQnYS7mcKoI927vXLyMrr5h5nkX6pgnWVqAnnKWg3gSv2uTVKYUIPcqBxFHBey8vUX2YsehDzOJSNxxUTjz_X4x_a9P5_Yi76IdsqR8uqSpvKPPYYeYlIS3b4EGIHorp58osRllrzR_fsA66txzYCSYmJ"/>
+</div>
+</div>
+<h1 class="font-headline-xl text-headline-xl mb-4 tracking-[0.3em] uppercase">UNDERSTORY</h1>
+<p class="font-body-lg text-body-lg italic tracking-widest opacity-90">Under the witness tree, where your story begin</p>
+</div>
+</section>
+<!-- Intro Text Section -->
+<section class="px-margin-mobile md:px-margin-desktop py-section-gap text-center bg-surface-container-low">
+<div class="max-w-4xl mx-auto reveal">
+<p class="font-label-caps text-label-caps text-primary mb-6 tracking-[0.2em]">OUR PHILOSOPHY</p>
+<h2 class="font-headline-lg text-headline-lg mb-8 md:text-headline-xl">A sanctuary of light and architectural silence, crafted for timeless union.</h2>
+<div class="w-24 h-px bg-outline mx-auto mb-8"></div>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">
+                    Understory is more than a venue; it is an architectural journey. Inspired by the quiet layers of the forest and the enduring strength of limestone, every space is designed to frame your most significant moments.
+                </p>
+</div>
+</section>
+<!-- Section 2: 'The Foundation' - Circular Bento/Asymmetric Grid -->
+<section class="px-margin-mobile md:px-margin-desktop py-section-gap overflow-hidden">
+<div class="flex flex-col md:flex-row items-end justify-between mb-16 reveal">
+<div class="max-w-xl">
+<h2 class="font-headline-lg text-headline-lg mb-4">The Foundation</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Explore our curated halls, each offering a distinct dialogue between texture, shadow, and nature.</p>
+</div>
+<div class="mt-8 md:mt-0">
+<button class="ghost-border px-8 py-3 rounded-lg font-label-caps text-label-caps hover:bg-tertiary-container/20 transition-all">VIEW FLOOR PLANS</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-12 items-start">
+<!-- Linden Hall -->
+<div class="flex flex-col items-center reveal" style="transition-delay: 100ms;">
+<div class="relative w-full aspect-square mb-8 group overflow-hidden rounded-full ghost-border p-2">
+<div class="w-full h-full rounded-full overflow-hidden">
+<img class="w-full h-full object-cover grayscale-[0.2] group-hover:scale-110 transition-transform duration-700" data-alt="A serene indoor wedding space called Linden Hall featuring tall, arched columns and high-quality vertically-ribbed limestone walls. The lighting is soft and ambient, highlighting a minimalist floral arrangement with white and yellow wildflowers. The space feels open and ethereal, reflecting a modern minimalist architectural style in cream and warm beige tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6y9_Z2S-RkPnvS0G6r2nDwJw4MhO3vZGKLMeOJF3DvV0NWYrSuwz2sFRd0nuB1H4RWUttXimUW5YdrL7H_wXsxleRsjyKHO-ji3hGGCx5MWGmuwYI4JV4v1XhoIEl6pCRe9Mlpe_zqcI9ao1s4hfSYjnN8jOKy4pdIO2jxL6uGPK3kX0seQJh4Stqy5X3lHRTWb0aLHXqHNeSLen17wXJfjfEj5wkPQxIbJ_4cRoA-4H8sifGc3POj6YJnCnDbFCsvPsqkKdf7Apr"/>
+</div>
+<div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-4xl">add</span>
+</div>
+</div>
+<div class="text-center">
+<span class="font-label-caps text-label-caps text-primary tracking-widest mb-2 block">01</span>
+<h3 class="font-headline-md text-headline-md mb-2">Linden Hall</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">The core of light and height.</p>
+</div>
+</div>
+<!-- Willow Hall -->
+<div class="flex flex-col items-center md:mt-24 reveal" style="transition-delay: 300ms;">
+<div class="relative w-full aspect-square mb-8 group overflow-hidden rounded-full ghost-border p-2">
+<div class="w-full h-full rounded-full overflow-hidden">
+<img class="w-full h-full object-cover grayscale-[0.2] group-hover:scale-110 transition-transform duration-700" data-alt="An intimate architectural detail of Willow Hall, showing a curved textured wall meeting a polished concrete floor. A single spotlight illuminates a modern, minimalist floral sculpture. The mood is moody yet sophisticated, with deep shadows and soft highlights on pale limestone, embodying a modern corporate aesthetic with a refined, artistic touch." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7XwDv_xs106_SPsBQ-UbXs1iTd6crjpSWxaPdk9UMgyh730C6MJUr2hjnU8GWybMpZ16KQp7wlQ5751d9qeCy_QEvplvt1Eixp7DdE1METmDPg3z7KCsHJJtMdDaHfjjOLjmDTe5-o-kRJWGg_aSl8zGRNWvbBgmFIbwMw66i93yMR9S-6z-EhDaZYGFZuuR9zl7HglowKf7SHa7L3v9Jd8yJ2865yeFgw4xuumj9raHmt7s_Pt1SaaI7EtZuG0LalHmU3Iv9CY_A"/>
+</div>
+<div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-4xl">add</span>
+</div>
+</div>
+<div class="text-center">
+<span class="font-label-caps text-label-caps text-primary tracking-widest mb-2 block">02</span>
+<h3 class="font-headline-md text-headline-md mb-2">Willow Hall</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">An intimate embrace of texture.</p>
+</div>
+</div>
+<!-- Mistle Hall -->
+<div class="flex flex-col items-center reveal" style="transition-delay: 500ms;">
+<div class="relative w-full aspect-square mb-8 group overflow-hidden rounded-full ghost-border p-2">
+<div class="w-full h-full rounded-full overflow-hidden">
+<img class="w-full h-full object-cover grayscale-[0.2] group-hover:scale-110 transition-transform duration-700" data-alt="A wide-angle view of Mistle Hall wedding reception area, showcasing a vast open-air design with a signature circular skylight. The space features long wooden communal tables with minimalist white décor and architectural seating. The overall aesthetic is clean, spacious, and extremely high-end, utilizing a warm beige and ivory color palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGPLwXES2C_-lHNEaCR5YAXdVBNz7y02VkeJ-rslfc5aN9MUrOJcYE59fBlZ1jsYia043cD4zu6LiR3N1lg6Q92Cq2TRlJ_HMHPfGQ7IKGmXfoJ4WfUjbWas1PWZWJUR9fpouoENVjaR3VefJTVXOQsRqXQigNGDj59GVz_QIyM5ncrWS2HAcI89DsxtJT_mHxogjbNS2j8f02ix1ODrm_N2TodlHW3dXOiQx4jXgj7h0WNr7A_OIu0klpvkkCsHptLcY2vXF-DdQy"/>
+</div>
+<div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-4xl">add</span>
+</div>
+</div>
+<div class="text-center">
+<span class="font-label-caps text-label-caps text-primary tracking-widest mb-2 block">03</span>
+<h3 class="font-headline-md text-headline-md mb-2">Mistle Hall</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Where the canopy meets the sky.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: Teaser for Signature Story -->
+<section class="bg-primary-container py-section-gap px-margin-mobile md:px-margin-desktop">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+<div class="reveal">
+<img class="w-full h-[600px] object-cover rounded-lg shadow-ambient" data-alt="A detailed shot of a minimalist wedding setup at Understory. A clean, matte charcoal sign with white elegant serif typography 'SIGNATURE STORY' sits on a natural wood easel. Behind it, a textured limestone wall is partially covered by delicate, airy floral arrangements in shades of cream and soft yellow. High-end editorial photography style with intentional whitespace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVk2rCeKg5sEVRotjvry5DohnkHWdU5Bb3WDvWg2X7CJlA0-gTOeAOv-uvC2JQ5dds0izyf5FDEzAbqujbNgF2GtZRoS3RPnNfKIZlQtshhm009V3qq4fNcvMlg3VsUzOKSarxOegX4aRFYja4D-exdl59r3rgWuqdnZK-VEF0eTg8NoLT4P47AbSTNsnuE6KNIZNNV0mndvV4H5l6s7MBu3W4U8h1zes2pcREGDoMfv4WWtzTp_dQt43GX-APdQYiikz8j0fpRDjA"/>
+</div>
+<div class="reveal">
+<span class="font-label-caps text-label-caps text-primary tracking-[0.2em] mb-4 block">FEATURED PACKAGE</span>
+<h2 class="font-headline-xl text-headline-lg md:text-headline-xl mb-6">Signature Story</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-12">
+                        Our most comprehensive experience. Designed for those who appreciate the poetry of detail and the luxury of seamless execution. A complete wedding journey from dawn until the last dance.
+                    </p>
+<div class="grid grid-cols-2 gap-8 mb-12 border-y border-outline-variant/30 py-8">
+<div>
+<span class="font-label-caps text-label-caps opacity-60 mb-2 block">HALF DAY</span>
+<p class="font-headline-md text-headline-md">379,000.-</p>
+</div>
+<div>
+<span class="font-label-caps text-label-caps opacity-60 mb-2 block">FULL DAY</span>
+<p class="font-headline-md text-headline-md">599,000.-</p>
+</div>
+</div>
+<ul class="space-y-4 mb-12">
+<li class="flex items-center gap-4 font-body-md">
+<span class="w-1.5 h-1.5 bg-primary rounded-full"></span>
+                            Exclusive use of Linden, Mistle &amp; Willow Halls
+                        </li>
+<li class="flex items-center gap-4 font-body-md">
+<span class="w-1.5 h-1.5 bg-primary rounded-full"></span>
+                            Bespoke Floral Design by Kaidang
+                        </li>
+<li class="flex items-center gap-4 font-body-md">
+<span class="w-1.5 h-1.5 bg-primary rounded-full"></span>
+                            Professional Run Queue &amp; Organizing Team
+                        </li>
+</ul>
+<button class="bg-on-surface text-surface px-12 py-4 rounded-lg font-label-caps text-label-caps tracking-widest hover:bg-primary transition-colors">EXPLORE ALL PACKAGES</button>
+</div>
+</div>
+</section>
+<!-- Newsletter / Contact Teaser -->
+<section class="py-section-gap px-margin-mobile md:px-margin-desktop text-center border-t border-outline-variant/30">
+<div class="max-w-2xl mx-auto reveal">
+<h2 class="font-headline-lg text-headline-lg mb-8">Begin your story today.</h2>
+<div class="flex flex-col md:flex-row gap-4 justify-center">
+<input class="bg-transparent border-b border-outline focus:border-primary focus:ring-0 px-4 py-3 font-body-md outline-none transition-all w-full md:w-80" placeholder="Your Email Address" type="email"/>
+<button class="font-label-caps text-label-caps bg-on-surface text-surface px-8 py-3 rounded-lg">ENQUIRE</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-section-gap px-margin-mobile md:px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-8 bg-surface-container dark:bg-on-surface border-t border-outline-variant">
+<div class="flex flex-col items-center md:items-start gap-4">
+<span class="font-headline-md text-headline-md text-primary tracking-widest uppercase brand-logo-font">UNDERSTORY</span>
+<p class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant">© 2024 Understory. All rights reserved.</p>
+</div>
+<div class="flex gap-12">
+<div class="flex flex-col gap-3">
+<a class="font-body-md text-body-md text-on-secondary-fixed-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="font-body-md text-body-md text-on-secondary-fixed-variant hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="font-body-md text-body-md text-on-secondary-fixed-variant hover:text-primary transition-colors" href="#">Press Kit</a>
+</div>
+<div class="flex flex-col gap-3">
+<a class="font-body-md text-body-md text-on-secondary-fixed-variant hover:text-primary transition-colors" href="#">Instagram</a>
+<a class="font-body-md text-body-md text-on-secondary-fixed-variant hover:text-primary transition-colors" href="#">Pinterest</a>
+<a class="font-body-md text-body-md text-on-secondary-fixed-variant hover:text-primary transition-colors" href="#">Contact</a>
+</div>
+</div>
+</footer>
+<script>
+        // Simple Intersection Observer for reveal animations
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Drawer Toggle Logic
+        const menuToggle = document.getElementById('menu-toggle');
+        const sideDrawer = document.getElementById('side-drawer');
+        const drawerContent = sideDrawer.querySelector('aside');
+
+        function toggleDrawer() {
+            const isOpen = sideDrawer.classList.contains('opacity-100');
+            if (isOpen) {
+                drawerContent.classList.add('-translate-x-full');
+                sideDrawer.classList.replace('opacity-100', 'opacity-0');
+                sideDrawer.classList.add('pointer-events-none');
+            } else {
+                sideDrawer.classList.remove('pointer-events-none');
+                sideDrawer.classList.replace('opacity-0', 'opacity-100');
+                drawerContent.classList.remove('-translate-x-full');
+            }
+        }
+
+        menuToggle.addEventListener('click', toggleDrawer);
+        sideDrawer.addEventListener('click', (e) => {
+            if (e.target === sideDrawer) toggleDrawer();
+        });
+    </script>
+</body></html>
