@@ -47,11 +47,28 @@ INSERT INTO public.settings (id, enable_gtm, gtm_id, enable_ga4, ga4_id, enable_
 VALUES ('global', false, '', false, '', false, '', false, '', '', '')
 ON CONFLICT (id) DO NOTHING;
 
--- 3. ENABLE ROW LEVEL SECURITY (RLS)
+-- 3. CREATE ADMIN USERS TABLE (for Login Authentication)
+CREATE TABLE IF NOT EXISTS public.admin_users (
+    id TEXT PRIMARY KEY DEFAULT 'admin_1',
+    username TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    role TEXT DEFAULT 'superadmin',
+    last_login TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Seed initial admin credentials
+INSERT INTO public.admin_users (id, username, password, role)
+VALUES ('admin_1', 'adminunderstory', 'Under123story@', 'superadmin')
+ON CONFLICT (username) DO UPDATE 
+SET password = EXCLUDED.password;
+
+-- 4. ENABLE ROW LEVEL SECURITY (RLS)
 ALTER TABLE public.leads ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.admin_users ENABLE ROW LEVEL SECURITY;
 
--- Allow Public / Anon Insert & Read for Leads & Settings
+-- Allow Public / Anon Policies
 CREATE POLICY "Allow public insert to leads" 
 ON public.leads FOR INSERT 
 WITH CHECK (true);
@@ -74,4 +91,8 @@ USING (true);
 
 CREATE POLICY "Allow public update on settings" 
 ON public.settings FOR UPDATE 
+USING (true);
+
+CREATE POLICY "Allow public select on admin_users" 
+ON public.admin_users FOR SELECT 
 USING (true);
