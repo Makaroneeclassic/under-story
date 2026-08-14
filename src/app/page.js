@@ -625,7 +625,7 @@ export default function Home() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full sm:w-auto bg-[#000000] text-[#F1F0EB] hover:bg-[#665340] px-12 py-4 rounded-md font-label-caps text-label-caps tracking-widest transition-all duration-300 cursor-pointer shadow-sm active:scale-95 disabled:opacity-60 flex items-center justify-center gap-2 mx-auto"
+                    className="w-full sm:w-auto bg-[#000000] text-[#F1F0EB] hover:bg-[#665340] px-14 py-4 rounded-md font-sans text-sm font-semibold tracking-wider transition-all duration-300 cursor-pointer shadow-sm active:scale-95 disabled:opacity-60 flex items-center justify-center gap-2 mx-auto"
                   >
                     {isSubmitting ? (
                       <>
@@ -633,7 +633,7 @@ export default function Home() {
                         กำลังส่งข้อมูล...
                       </>
                     ) : (
-                      "SEND INQUIRY (ส่งข้อมูลติดต่อ)"
+                      "ยืนยัน"
                     )}
                   </button>
                 </div>
@@ -647,7 +647,7 @@ export default function Home() {
       <footer className="w-full py-16 px-margin-mobile md:px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-8 bg-[#ECEAE3] border-t border-[#9C8B72]/30">
         <div className="flex flex-col items-center md:items-start gap-3">
           <Image
-            src="/logo_understory_authentic.png"
+            src="/logo_understory_authentic.webp"
             alt="Understory Logo"
             width={150}
             height={65}
