@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const STATUS_CONFIG = {
   NEW: { label: "ใหม่ (ยังไม่ติดต่อ)", bg: "bg-amber-100 text-amber-900 border-amber-300" },
@@ -14,6 +15,7 @@ const STATUS_CONFIG = {
 };
 
 export default function AdminDashboardPage() {
+  const router = useRouter();
   // Navigation Tabs: 'leads' | 'tracking'
   const [activeTab, setActiveTab] = useState("leads");
 
@@ -195,6 +197,17 @@ export default function AdminDashboardPage() {
     });
   }, [leads, searchQuery, statusFilter, monthFilter]);
 
+  // Handle Logout
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      router.push("/admin/login");
+      router.refresh();
+    } catch (err) {
+      console.error("Logout error", err);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#F7F6F2] text-[#2D2A26] font-sans antialiased">
       {/* Top Admin Header */}
@@ -203,7 +216,7 @@ export default function AdminDashboardPage() {
           <div className="flex items-center gap-4">
             <Link href="/" className="flex items-center">
               <Image
-                src="/logo_understory_authentic.png"
+                src="/logo_understory_authentic.webp"
                 alt="Understory Logo"
                 width={130}
                 height={55}
@@ -232,10 +245,18 @@ export default function AdminDashboardPage() {
             )}
             <Link
               href="/"
-              className="bg-[#000000] hover:bg-[#665340] text-[#F1F0EB] text-xs font-semibold px-4 py-2 rounded-md shadow-sm transition-colors"
+              className="bg-white border border-[#9C8B72]/40 hover:bg-[#FAF9F5] text-[#4A4742] text-xs font-semibold px-4 py-2 rounded-md shadow-xs transition-colors"
             >
-              กลับหน้าหลัก
+              ดูหน้าเว็บหลัก
             </Link>
+            <button
+              onClick={handleLogout}
+              className="bg-[#000000] hover:bg-red-700 text-[#F1F0EB] text-xs font-semibold px-3.5 py-2 rounded-md shadow-sm transition-colors flex items-center gap-1.5 cursor-pointer"
+              title="ออกจากระบบ Admin"
+            >
+              <span className="material-symbols-outlined text-sm">logout</span>
+              ออกจากระบบ
+            </button>
           </div>
         </div>
 
