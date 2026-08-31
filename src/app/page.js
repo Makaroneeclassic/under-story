@@ -169,10 +169,18 @@ export default function Home() {
       const data = await res.json();
       if (data.success) {
         setIsSubmitted(true);
-        if (typeof window !== "undefined" && typeof window.fbq === "function") {
-          window.fbq("track", "Lead", {
-            content_name: "Understory Venue Inquiry",
-          });
+        if (typeof window !== "undefined") {
+          if (typeof window.fbq === "function") {
+            window.fbq("track", "Lead", {
+              content_name: "Understory Venue Inquiry",
+            });
+          }
+          if (typeof window.gtag === "function") {
+            window.gtag("event", "generate_lead", {
+              event_category: "Form",
+              event_label: "Understory Venue Inquiry",
+            });
+          }
         }
       } else {
         setErrorMessage(data.message || "เกิดข้อผิดพลาดในการส่งข้อมูล");
@@ -181,10 +189,18 @@ export default function Home() {
       console.error("Lead submission error:", err);
       // Fallback to success for smooth UX
       setIsSubmitted(true);
-      if (typeof window !== "undefined" && typeof window.fbq === "function") {
-        window.fbq("track", "Lead", {
-          content_name: "Understory Venue Inquiry",
-        });
+      if (typeof window !== "undefined") {
+        if (typeof window.fbq === "function") {
+          window.fbq("track", "Lead", {
+            content_name: "Understory Venue Inquiry",
+          });
+        }
+        if (typeof window.gtag === "function") {
+          window.gtag("event", "generate_lead", {
+            event_category: "Form",
+            event_label: "Understory Venue Inquiry",
+          });
+        }
       }
     } finally {
       setIsSubmitting(false);
