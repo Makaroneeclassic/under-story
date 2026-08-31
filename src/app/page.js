@@ -170,15 +170,19 @@ export default function Home() {
       if (data.success) {
         setIsSubmitted(true);
         if (typeof window !== "undefined") {
+          // 1. Meta Pixel Lead Event
           if (typeof window.fbq === "function") {
             window.fbq("track", "Lead", {
               content_name: "Understory Venue Inquiry",
+              event_month: formData.eventMonth || "ไม่ระบุ",
+              status: "submitted",
             });
           }
+          // 2. Google Analytics 4 Lead Event
           if (typeof window.gtag === "function") {
             window.gtag("event", "generate_lead", {
-              event_category: "Form",
-              event_label: "Understory Venue Inquiry",
+              event_category: "Inquiries & Registration",
+              event_label: `Inquiry - ${formData.eventMonth || "ไม่ระบุ"}`,
             });
           }
         }
@@ -193,12 +197,14 @@ export default function Home() {
         if (typeof window.fbq === "function") {
           window.fbq("track", "Lead", {
             content_name: "Understory Venue Inquiry",
+            event_month: formData.eventMonth || "ไม่ระบุ",
+            status: "submitted",
           });
         }
         if (typeof window.gtag === "function") {
           window.gtag("event", "generate_lead", {
-            event_category: "Form",
-            event_label: "Understory Venue Inquiry",
+            event_category: "Inquiries & Registration",
+            event_label: `Inquiry - ${formData.eventMonth || "ไม่ระบุ"}`,
           });
         }
       }
@@ -693,6 +699,8 @@ export default function Home() {
 
                 <div className="pt-4 text-center">
                   <button
+                    id="submit-inquiry-btn"
+                    data-tracking="lead-submit"
                     type="submit"
                     disabled={isSubmitting}
                     className="w-full sm:w-auto bg-[#000000] text-[#F1F0EB] hover:bg-[#665340] px-14 py-4 rounded-md font-sans text-sm font-semibold tracking-wider transition-all duration-300 cursor-pointer shadow-sm active:scale-95 disabled:opacity-60 flex items-center justify-center gap-2 mx-auto"
