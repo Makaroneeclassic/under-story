@@ -7,6 +7,14 @@ import Link from "next/link";
 const galleryItems = [
   {
     id: 1,
+    title: "Mistle Hall - Open Sky Skylight",
+    category: "MISTLE HALL",
+    src: "/pic/08.webp",
+    aspect: "aspect-[4/5]",
+    description: "Expansive circular hall where the ceiling opens directly to the sky and tree canopies.",
+  },
+  {
+    id: 2,
     title: "Linden Hall - Arched Grandeur",
     category: "LINDEN HALL",
     src: "/pic/04.webp",
@@ -14,20 +22,12 @@ const galleryItems = [
     description: "Towering limestone columns bathed in diffused natural daylight, framing sacred unions.",
   },
   {
-    id: 2,
+    id: 3,
     title: "Willow Hall - Textured Curves",
     category: "WILLOW HALL",
     src: "/pic/02.webp",
     aspect: "aspect-[4/3]",
     description: "An intimate sanctuary of organic curves, soft shadows, and warm architectural stone.",
-  },
-  {
-    id: 3,
-    title: "Mistle Hall - Open Sky Skylight",
-    category: "MISTLE HALL",
-    src: "/pic/08.webp",
-    aspect: "aspect-[4/5]",
-    description: "Expansive circular hall where the ceiling opens directly to the sky and tree canopies.",
   },
   {
     id: 4,
@@ -63,7 +63,7 @@ const galleryItems = [
   },
 ];
 
-const categories = ["ALL", "LINDEN HALL", "WILLOW HALL", "MISTLE HALL", "AERIAL & ARCHITECTURE"];
+const categories = ["ALL", "MISTLE HALL", "LINDEN HALL", "WILLOW HALL", "AERIAL & ARCHITECTURE"];
 
 export default function GalleryPage() {
   const [selectedCategory, setSelectedCategory] = useState("ALL");

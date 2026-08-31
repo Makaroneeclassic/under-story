@@ -445,49 +445,49 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16 items-start max-w-6xl mx-auto">
-            {/* 1. Linden Hall */}
+            {/* 1. Mistle Hall */}
             <HallCard
               num="1"
               phase="ARRIVAL & GATHERING"
               phaseSub="The welcome begins here"
-              title="LINDEN HALL"
+              title="MISTLE HALL"
               concept="WELCOME LOVE"
               desc="Arrival and gathering set the tone for the day."
-              imgSrc="/pic/04.webp"
+              imgSrc="/pic/08.webp"
               treeSrc="/tree_canopy_full_circle_v3.webp"
               rotateClass="rotate-0"
-              alt="Linden Hall - Arrival and Gathering"
+              alt="Mistle Hall - Arrival and Gathering"
               delay="100ms"
             />
 
-            {/* 2. Willow Hall */}
+            {/* 2. Linden Hall */}
             <HallCard
               num="2"
               phase="CEREMONY"
               phaseSub="The heart of your promise"
-              title="WILLOW HALL"
+              title="LINDEN HALL"
               concept="FOREVER LOVE"
               desc="The ceremony takes place at the heart of it all."
-              imgSrc="/pic/02.webp"
+              imgSrc="/pic/04.webp"
               treeSrc="/tree_canopy_full_circle_v3.webp"
               rotateClass="rotate-[115deg]"
-              alt="Willow Hall - The Ceremony Space"
+              alt="Linden Hall - The Ceremony Space"
               delay="300ms"
               containerClass="md:mt-12"
             />
 
-            {/* 3. Mistle Hall */}
+            {/* 3. Willow Hall */}
             <HallCard
               num="3"
               phase="CELEBRATION"
               phaseSub="Where love comes together"
-              title="MISTLE HALL"
+              title="WILLOW HALL"
               concept="CELEBRATE LOVE"
               desc="Celebration, connection and memories to last."
-              imgSrc="/pic/08.webp"
+              imgSrc="/pic/02.webp"
               treeSrc="/tree_canopy_full_circle_v3.webp"
               rotateClass="rotate-[230deg]"
-              alt="Mistle Hall - The Celebration Space"
+              alt="Willow Hall - The Celebration Space"
               delay="500ms"
             />
           </div>
