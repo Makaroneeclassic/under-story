@@ -151,9 +151,15 @@ export default function GalleryPage() {
         </div>
 
         <div className="flex items-center gap-4">
-          <button className="hidden md:block font-label-caps text-label-caps text-[#4A4742] hover:text-[#000000] transition-colors mr-4 cursor-pointer">
+          <a
+            href="/presskit/understory-booklet.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            download="UnderStory-Booklet.pdf"
+            className="hidden md:block font-label-caps text-label-caps text-[#4A4742] hover:text-[#000000] transition-colors mr-4 cursor-pointer"
+          >
             PRESS KIT
-          </button>
+          </a>
           <Link
             href="/#contact"
             className="bg-[#000000] text-[#F1F0EB] hover:bg-[#665340] py-2.5 px-6 rounded-md font-label-caps text-label-caps tracking-widest transition-all duration-300 cursor-pointer shadow-sm text-center"
@@ -347,9 +353,15 @@ export default function GalleryPage() {
           </p>
         </div>
         <div className="flex flex-wrap items-center justify-center md:justify-end gap-8">
-          <button className="font-body-md text-sm text-[#4A4742] hover:text-[#000000] transition-colors cursor-pointer">
+          <a
+            className="font-body-md text-sm text-[#4A4742] hover:text-[#000000] transition-colors cursor-pointer"
+            href="/presskit/understory-booklet.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            download="UnderStory-Booklet.pdf"
+          >
             Press Kit
-          </button>
+          </a>
           <a
             className="font-body-md text-sm text-[#4A4742] hover:text-[#000000] transition-colors"
             href="https://www.instagram.com/understory.venue/"
