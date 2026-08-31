@@ -408,7 +408,7 @@ export default function Home() {
 
           <div className="relative z-30 flex flex-col items-center justify-center text-[#F1F0EB] reveal active px-4 max-w-4xl">
             <Image
-              src="/logo_understory_authentic_white.png"
+              src="/logo_understory_authentic_white.webp"
               alt="Understory Logo"
               width={580}
               height={270}

@@ -140,7 +140,7 @@ export default function GalleryPage() {
         <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center">
           <Link href="/" className="flex items-center">
             <Image
-              src="/logo_understory_authentic.png"
+              src="/logo_understory_authentic.webp"
               alt="Understory Logo"
               width={160}
               height={70}
