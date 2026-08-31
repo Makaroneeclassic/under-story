@@ -36,6 +36,15 @@ const notoSerifThai = Noto_Serif_Thai({
 export const metadata = {
   title: "Understory | Architectural Wedding Venue",
   description: "Under the witness tree, where your story begins. Understory is more than a venue; it is an architectural journey. Inspired by the quiet layers of the forest and the enduring strength of limestone, every space is designed to frame your most significant moments.",
+  icons: {
+    icon: [
+      { url: "/icon.png", type: "image/png" },
+      { url: "/favicon.ico" },
+    ],
+    apple: [
+      { url: "/apple-icon.png", type: "image/png" },
+    ],
+  },
 };
 
 export default function RootLayout({ children }) {
