@@ -214,7 +214,10 @@ export default function GalleryPage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
                   <span className="text-[#F1F0EB] font-label-caps text-xs tracking-widest uppercase flex items-center gap-2">
-                    <span className="material-symbols-outlined text-base">zoom_in</span> VIEW FULL PHOTO
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+                    </svg>
+                    VIEW FULL PHOTO
                   </span>
                 </div>
               </div>
@@ -240,34 +243,44 @@ export default function GalleryPage() {
       {/* Lightbox Modal */}
       {lightboxIndex !== null && (
         <div
-          className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 md:p-10 transition-opacity duration-300"
+          className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 md:p-10 transition-opacity duration-300 select-none"
           onClick={closeLightbox}
         >
           {/* Close button */}
           <button
             onClick={closeLightbox}
-            className="absolute top-6 right-6 text-[#F1F0EB] hover:text-[#9C8B72] transition-colors p-2 z-[110] cursor-pointer"
+            className="absolute top-6 right-6 text-white hover:text-[#D4C3A3] p-2.5 z-[110] cursor-pointer bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 hover:border-white/40 rounded-full shadow-2xl transition-all duration-200 hover:scale-110 active:scale-95 flex items-center gap-1.5"
             aria-label="Close lightbox"
+            title="ปิด (Esc)"
           >
-            <span className="material-symbols-outlined text-3xl">close</span>
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            <span className="text-[10px] font-mono tracking-wider text-white/80 pr-1 hidden sm:inline">ESC</span>
           </button>
 
           {/* Prev button */}
           <button
             onClick={prevLightbox}
-            className="absolute left-4 md:left-8 text-[#F1F0EB] hover:text-[#9C8B72] transition-colors p-3 z-[110] cursor-pointer bg-black/40 hover:bg-black/70 rounded-full"
+            className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 text-white hover:text-[#D4C3A3] p-3.5 z-[110] cursor-pointer bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 hover:border-white/40 rounded-full shadow-2xl transition-all duration-200 hover:scale-110 active:scale-95 group"
             aria-label="Previous photo"
+            title="รูปก่อนหน้า (ลูกศรซ้าย)"
           >
-            <span className="material-symbols-outlined text-3xl">arrow_back_ios_new</span>
+            <svg className="w-6 h-6 transform group-hover:-translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+            </svg>
           </button>
 
           {/* Next button */}
           <button
             onClick={nextLightbox}
-            className="absolute right-4 md:right-8 text-[#F1F0EB] hover:text-[#9C8B72] transition-colors p-3 z-[110] cursor-pointer bg-black/40 hover:bg-black/70 rounded-full"
+            className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 text-white hover:text-[#D4C3A3] p-3.5 z-[110] cursor-pointer bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 hover:border-white/40 rounded-full shadow-2xl transition-all duration-200 hover:scale-110 active:scale-95 group"
             aria-label="Next photo"
+            title="รูปถัดไป (ลูกศรขวา)"
           >
-            <span className="material-symbols-outlined text-3xl">arrow_forward_ios</span>
+            <svg className="w-6 h-6 transform group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+            </svg>
           </button>
 
           {/* Image & Caption container */}
@@ -323,7 +336,7 @@ export default function GalleryPage() {
       <footer className="w-full py-16 px-margin-mobile md:px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-8 bg-[#F1F0EB] border-t border-[#9C8B72]/30">
         <div className="flex flex-col items-center md:items-start gap-3">
           <Image
-            src="/logo_understory_authentic.png"
+            src="/logo_understory_authentic.webp"
             alt="Understory Logo"
             width={150}
             height={65}

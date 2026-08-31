@@ -245,7 +245,7 @@ export default function Home() {
         <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center">
           <a href="#" className="flex items-center">
             <Image
-              src="/logo_understory_authentic.png"
+              src="/logo_understory_authentic.webp"
               alt="Understory Logo"
               width={160}
               height={70}
@@ -284,18 +284,20 @@ export default function Home() {
         >
           <div className="p-6 flex justify-between items-center border-b border-[#9C8B72]/20">
             <Image
-              src="/logo_understory_authentic.png"
+              src="/logo_understory_authentic.webp"
               alt="Understory Logo"
               width={140}
               height={60}
               className="h-9 w-auto object-contain"
             />
             <button
-              className="material-symbols-outlined text-[#665340] hover:text-black cursor-pointer p-1"
+              className="text-[#665340] hover:text-black p-1.5 rounded-full hover:bg-black/5 transition-colors cursor-pointer"
               onClick={toggleDrawer}
               aria-label="Close drawer"
             >
-              close
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
           </div>
           <nav className="flex-1 py-8">
@@ -305,7 +307,9 @@ export default function Home() {
                 href="#venue"
                 onClick={toggleDrawer}
               >
-                <span className="material-symbols-outlined text-[#665340]">architecture</span>
+                <svg className="w-5 h-5 text-[#665340]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
                 The Venue
               </a>
               <a
@@ -313,15 +317,39 @@ export default function Home() {
                 href="#halls"
                 onClick={toggleDrawer}
               >
-                <span className="material-symbols-outlined text-[#665340]">account_balance</span>
+                <svg className="w-5 h-5 text-[#665340]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
+                </svg>
                 Halls
               </a>
+              <a
+                className="text-[#4A4742] hover:text-[#000000] hover:bg-[#EAE8E1] transition-all mx-3 flex items-center gap-4 px-4 py-3.5 rounded-md font-body-md"
+                href="#floor-plans"
+                onClick={toggleDrawer}
+              >
+                <svg className="w-5 h-5 text-[#665340]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                </svg>
+                Floor Plans
+              </a>
+              <Link
+                className="text-[#4A4742] hover:text-[#000000] hover:bg-[#EAE8E1] transition-all mx-3 flex items-center gap-4 px-4 py-3.5 rounded-md font-body-md"
+                href="/gallery"
+                onClick={toggleDrawer}
+              >
+                <svg className="w-5 h-5 text-[#665340]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                Gallery
+              </Link>
               <a
                 className="text-[#4A4742] hover:text-[#000000] hover:bg-[#EAE8E1] transition-all mx-3 flex items-center gap-4 px-4 py-3.5 rounded-md font-body-md"
                 href="#contact"
                 onClick={toggleDrawer}
               >
-                <span className="material-symbols-outlined text-[#665340]">mail</span>
+                <svg className="w-5 h-5 text-[#665340]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
                 Contact
               </a>
             </div>
@@ -426,7 +454,7 @@ export default function Home() {
               concept="WELCOME LOVE"
               desc="Arrival and gathering set the tone for the day."
               imgSrc="/pic/04.webp"
-              treeSrc="/tree_canopy_full_circle_v3.webp"
+              treeSrc="/tree_linden_canopy.webp"
               rotateClass="rotate-0"
               alt="Linden Hall - Arrival and Gathering"
               delay="100ms"
@@ -441,8 +469,8 @@ export default function Home() {
               concept="FOREVER LOVE"
               desc="The ceremony takes place at the heart of it all."
               imgSrc="/pic/02.webp"
-              treeSrc="/tree_canopy_full_circle_v3.webp"
-              rotateClass="rotate-[115deg]"
+              treeSrc="/tree_willow_canopy.webp"
+              rotateClass="rotate-0"
               alt="Willow Hall - The Ceremony Space"
               delay="300ms"
               containerClass="md:mt-12"
@@ -457,8 +485,8 @@ export default function Home() {
               concept="CELEBRATE LOVE"
               desc="Celebration, connection and memories to last."
               imgSrc="/pic/08.webp"
-              treeSrc="/tree_canopy_full_circle_v3.webp"
-              rotateClass="rotate-[230deg]"
+              treeSrc="/tree_mistle_canopy.webp"
+              rotateClass="rotate-0"
               alt="Mistle Hall - The Celebration Space"
               delay="500ms"
             />

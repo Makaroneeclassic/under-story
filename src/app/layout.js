@@ -44,6 +44,12 @@ export default function RootLayout({ children }) {
       lang="th"
       className={`${cormorantGaramond.variable} ${libreCaslonText.variable} ${dmSans.variable} ${notoSansThai.variable} ${notoSerifThai.variable} scroll-smooth`}
     >
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+        />
+      </head>
       <body className="bg-background text-on-surface font-body-md selection:bg-secondary/30 antialiased">
         <TrackingScripts />
         {children}
