@@ -97,25 +97,31 @@ export async function updateSettings(newSettings) {
 
   if (isSupabaseConfigured && supabase) {
     try {
-      const { error } = await supabase.from("settings").upsert(
-        {
-          id: "global",
-          enable_gtm: updated.enableGTM,
-          gtm_id: updated.gtmId,
-          enable_ga4: updated.enableGA4,
-          ga4_id: updated.ga4Id,
-          enable_fb_pixel: updated.enableFBPixel,
-          fb_pixel_id: updated.fbPixelId,
-          enable_tiktok_pixel: updated.enableTikTokPixel,
-          tiktok_pixel_id: updated.tiktokPixelId,
-          custom_head_script: updated.customHeadScript,
-          custom_body_script: updated.customBodyScript,
-          updated_at: updated.updatedAt,
-        },
-        { onConflict: "id" }
-      );
+      const payload = {
+        enable_gtm: updated.enableGTM,
+        gtm_id: updated.gtmId,
+        enable_ga4: updated.enableGA4,
+        ga4_id: updated.ga4Id,
+        enable_fb_pixel: updated.enableFBPixel,
+        fb_pixel_id: updated.fbPixelId,
+        enable_tiktok_pixel: updated.enableTikTokPixel,
+        tiktok_pixel_id: updated.tiktokPixelId,
+        custom_head_script: updated.customHeadScript,
+        custom_body_script: updated.customBodyScript,
+        updated_at: updated.updatedAt,
+      };
 
-      if (error) throw error;
+      const { data: updateData, error: updateError } = await supabase
+        .from("settings")
+        .update(payload)
+        .eq("id", "global")
+        .select();
+
+      if (updateError || !updateData || updateData.length === 0) {
+        // If not exists yet, insert
+        await supabase.from("settings").insert({ id: "global", ...payload });
+      }
+
       return updated;
     } catch (err) {
       console.error("Supabase updateSettings error, falling back to local:", err);

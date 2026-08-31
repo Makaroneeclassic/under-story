@@ -3,11 +3,11 @@
   "gtmId": "GTM-UNDER01",
   "enableGA4": true,
   "ga4Id": "G-UNDERSTORY01",
-  "enableFBPixel": false,
-  "fbPixelId": "",
+  "enableFBPixel": true,
+  "fbPixelId": "1057683390524391",
   "enableTikTokPixel": false,
   "tiktokPixelId": "",
   "customHeadScript": "",
   "customBodyScript": "",
-  "updatedAt": "2026-08-14T12:05:18.350Z"
+  "updatedAt": "2026-08-31T15:20:48.422Z"
 }
