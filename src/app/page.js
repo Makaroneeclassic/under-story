@@ -547,12 +547,12 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Lead Form: Inquiries & Reservations */}
+        {/* Lead Form: Inquiries & Registration */}
         <section id="contact" className="py-section-gap px-margin-mobile md:px-margin-desktop border-t border-[#9C8B72]/30 bg-[#F1F0EB]">
           <div className="max-w-3xl mx-auto reveal">
             <div className="text-center mb-12">
-              <span className="font-label-caps text-label-caps text-[#9C8B72] tracking-[0.25em] mb-4 block">
-                INQUIRIES & RESERVATIONS
+              <span className="font-label-caps text-label-caps text-[#9C8B72] tracking-[0.25em] mb-4 block uppercase">
+                INQUIRIES & REGISTRATION
               </span>
               <h2 className="font-serif text-3xl md:text-5xl text-[#000000] mb-4 font-normal">
                 Begin your story today.
