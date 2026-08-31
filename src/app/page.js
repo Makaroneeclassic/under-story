@@ -107,10 +107,14 @@ function HallCard({ num, phase, phaseSub, title, concept, desc, imgSrc, treeSrc,
             {concept}
           </span>
         )}
-        <div className="w-8 h-[1px] bg-[#9C8B72]/50 mx-auto mb-3"></div>
-        <p className="font-serif italic text-sm text-[#4A4742] leading-relaxed">
-          {desc}
-        </p>
+        {desc && (
+          <>
+            <div className="w-8 h-[1px] bg-[#9C8B72]/50 mx-auto my-3"></div>
+            <p className="font-serif italic text-sm text-[#4A4742] leading-relaxed">
+              {desc}
+            </p>
+          </>
+        )}
       </div>
     </div>
   );
@@ -451,8 +455,6 @@ export default function Home() {
               phase="ARRIVAL & GATHERING"
               phaseSub="The welcome begins here"
               title="MISTLE HALL"
-              concept="WELCOME LOVE"
-              desc="Arrival and gathering set the tone for the day."
               imgSrc="/pic/08.webp"
               treeSrc="/tree_canopy_full_circle_v3.webp"
               rotateClass="rotate-0"
@@ -466,8 +468,6 @@ export default function Home() {
               phase="CEREMONY"
               phaseSub="The heart of your promise"
               title="LINDEN HALL"
-              concept="FOREVER LOVE"
-              desc="The ceremony takes place at the heart of it all."
               imgSrc="/pic/04.webp"
               treeSrc="/tree_canopy_full_circle_v3.webp"
               rotateClass="rotate-[115deg]"
@@ -482,8 +482,6 @@ export default function Home() {
               phase="CELEBRATION"
               phaseSub="Where love comes together"
               title="WILLOW HALL"
-              concept="CELEBRATE LOVE"
-              desc="Celebration, connection and memories to last."
               imgSrc="/pic/02.webp"
               treeSrc="/tree_canopy_full_circle_v3.webp"
               rotateClass="rotate-[230deg]"
