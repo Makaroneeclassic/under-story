@@ -18,24 +18,22 @@ export async function GET() {
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { firstName, lastName, eventMonth, phone, notes } = body;
-
-    // Validation
-    if (!firstName || !lastName || !eventMonth || !phone) {
+    // Validation: Only firstName and phone are required
+    if (!firstName || !phone) {
       return NextResponse.json(
         {
           success: false,
-          message: "กรุณากรอกข้อมูลให้ครบถ้วน (ชื่อ, นามสกุล, ช่วงเดือนที่จัดงาน, เบอร์โทรศัพท์)",
+          message: "กรุณากรอกชื่อและเบอร์โทรติดต่อ",
         },
         { status: 400 }
       );
     }
 
     const newLead = await createLead({
-      firstName,
-      lastName,
-      eventMonth,
-      phone,
+      firstName: firstName.trim(),
+      lastName: lastName ? lastName.trim() : "",
+      eventMonth: eventMonth ? eventMonth.trim() : "ยังไม่ระบุ",
+      phone: phone.trim(),
       notes: notes || "",
     });
 
