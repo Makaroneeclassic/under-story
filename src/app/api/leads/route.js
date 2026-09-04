@@ -18,6 +18,8 @@ export async function GET() {
 export async function POST(request) {
   try {
     const body = await request.json();
+    const { firstName, lastName, eventMonth, phone, notes } = body || {};
+
     // Validation: Only firstName and phone are required
     if (!firstName || !phone) {
       return NextResponse.json(
