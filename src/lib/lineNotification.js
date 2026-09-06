@@ -88,7 +88,6 @@ export function createLeadFlexMessage(lead, adminUrl = "https://understoryvenue.
             weight: "bold",
             color: "#D3CCC0",
             size: "xxs",
-            letterSpacing: "3px",
           },
           {
             type: "text",
@@ -247,7 +246,7 @@ export function createLeadFlexMessage(lead, adminUrl = "https://understoryvenue.
                   color: "#166534",
                   action: {
                     type: "uri",
-                    label: `📞 โทรหาลูกค้า (${cleanPhone})`,
+                    label: "📞 โทรหาลูกค้า",
                     uri: `tel:${cleanPhone}`,
                   },
                 },
@@ -255,12 +254,12 @@ export function createLeadFlexMessage(lead, adminUrl = "https://understoryvenue.
             : []),
           {
             type: "button",
-            style: "secondary",
+            style: "primary",
             height: "sm",
             color: "#665340",
             action: {
               type: "uri",
-              label: "📊 ดูข้อมูลใน Admin Dashboard",
+              label: "📊 ดูในระบบ Admin",
               uri: adminUrl,
             },
           },
@@ -293,10 +292,10 @@ export async function broadcastLineMessage({ token, messages }) {
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    const errorMsg =
-      data?.message ||
-      data?.details?.[0]?.message ||
-      `LINE API returned status ${response.status}`;
+    const detailMsg = data?.details?.map((d) => `${d.property ? d.property + ": " : ""}${d.message}`).join("; ");
+    const errorMsg = detailMsg
+      ? `${data?.message || "LINE API Error"} (${detailMsg})`
+      : data?.message || `LINE API returned status ${response.status}`;
     throw new Error(errorMsg);
   }
 
@@ -326,10 +325,10 @@ export async function replyLineMessage({ token, replyToken, messages }) {
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    const errorMsg =
-      data?.message ||
-      data?.details?.[0]?.message ||
-      `LINE API returned status ${response.status}`;
+    const detailMsg = data?.details?.map((d) => `${d.property ? d.property + ": " : ""}${d.message}`).join("; ");
+    const errorMsg = detailMsg
+      ? `${data?.message || "LINE API Error"} (${detailMsg})`
+      : data?.message || `LINE API returned status ${response.status}`;
     throw new Error(errorMsg);
   }
 
@@ -359,10 +358,10 @@ export async function pushLineMessage({ token, targetId, messages }) {
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    const errorMsg =
-      data?.message ||
-      data?.details?.[0]?.message ||
-      `LINE API returned status ${response.status}`;
+    const detailMsg = data?.details?.map((d) => `${d.property ? d.property + ": " : ""}${d.message}`).join("; ");
+    const errorMsg = detailMsg
+      ? `${data?.message || "LINE API Error"} (${detailMsg})`
+      : data?.message || `LINE API returned status ${response.status}`;
     throw new Error(errorMsg);
   }
 
