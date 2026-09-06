@@ -16,12 +16,13 @@ export async function getLineConfig() {
       process.env.LINE_USER_ID?.trim() ||
       process.env.LINE_GROUP_ID?.trim() ||
       "";
+    const sendMode = settings?.lineSendMode || (targetId ? "push" : "broadcast");
     const enabled =
       typeof settings?.enableLineNotify === "boolean"
         ? settings.enableLineNotify
-        : Boolean(token && targetId);
+        : Boolean(token);
 
-    return { token, targetId, enabled };
+    return { token, targetId, enabled, sendMode };
   } catch (error) {
     console.error("Error loading LINE config:", error);
     return {
@@ -32,6 +33,7 @@ export async function getLineConfig() {
         process.env.LINE_GROUP_ID?.trim() ||
         "",
       enabled: false,
+      sendMode: "broadcast",
     };
   }
 }
@@ -269,7 +271,73 @@ export function createLeadFlexMessage(lead, adminUrl = "https://under-story.verc
 }
 
 /**
- * Send Push Message via LINE Messaging API
+ * Send Broadcast Message to ALL followers via LINE Messaging API
+ * (Anyone who adds the LINE Official Account as a friend will receive it)
+ */
+export async function broadcastLineMessage({ token, messages }) {
+  if (!token) {
+    throw new Error("Missing LINE Channel Access Token");
+  }
+
+  const response = await fetch("https://api.line.me/v2/bot/message/broadcast", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      messages: Array.isArray(messages) ? messages : [messages],
+    }),
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    const errorMsg =
+      data?.message ||
+      data?.details?.[0]?.message ||
+      `LINE API returned status ${response.status}`;
+    throw new Error(errorMsg);
+  }
+
+  return { success: true, data };
+}
+
+/**
+ * Reply to an incoming webhook message/follow event
+ */
+export async function replyLineMessage({ token, replyToken, messages }) {
+  if (!token || !replyToken) {
+    throw new Error("Missing token or replyToken");
+  }
+
+  const response = await fetch("https://api.line.me/v2/bot/message/reply", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      replyToken,
+      messages: Array.isArray(messages) ? messages : [messages],
+    }),
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    const errorMsg =
+      data?.message ||
+      data?.details?.[0]?.message ||
+      `LINE API returned status ${response.status}`;
+    throw new Error(errorMsg);
+  }
+
+  return { success: true, data };
+}
+
+/**
+ * Send Push Message via LINE Messaging API to specific user or group
  */
 export async function pushLineMessage({ token, targetId, messages }) {
   if (!token || !targetId) {
@@ -303,12 +371,13 @@ export async function pushLineMessage({ token, targetId, messages }) {
 
 /**
  * Send notification for a newly created lead
+ * Supports both Broadcast (to all friends who added the bot) and Push (to specific user/group ID)
  */
 export async function sendLineLeadNotification(lead) {
   try {
-    const { token, targetId, enabled } = await getLineConfig();
+    const { token, targetId, enabled, sendMode } = await getLineConfig();
 
-    if (!enabled || !token || !targetId) {
+    if (!enabled || !token) {
       // LINE notification disabled or not configured
       return { success: false, reason: "disabled_or_unconfigured" };
     }
@@ -322,11 +391,20 @@ export async function sendLineLeadNotification(lead) {
 
     const flexMsg = createLeadFlexMessage(lead, adminUrl);
 
-    await pushLineMessage({
-      token,
-      targetId,
-      messages: [flexMsg],
-    });
+    // If sendMode is broadcast OR no targetId is set, broadcast to everyone who added the bot!
+    if (sendMode === "broadcast" || !targetId) {
+      await broadcastLineMessage({
+        token,
+        messages: [flexMsg],
+      });
+    } else {
+      // Otherwise push to specific User ID / Group ID
+      await pushLineMessage({
+        token,
+        targetId,
+        messages: [flexMsg],
+      });
+    }
 
     return { success: true };
   } catch (error) {
@@ -338,7 +416,7 @@ export async function sendLineLeadNotification(lead) {
 /**
  * Send test notification from Admin page
  */
-export async function sendLineTestNotification({ token, targetId }) {
+export async function sendLineTestNotification({ token, targetId, sendMode = "broadcast" }) {
   const dummyLead = {
     firstName: "ทดสอบ",
     lastName: "ระบบแจ้งเตือน",
@@ -349,16 +427,21 @@ export async function sendLineTestNotification({ token, targetId }) {
   };
 
   const flexMsg = createLeadFlexMessage(dummyLead);
+  const messages = [
+    {
+      type: "text",
+      text: "✅ [Understory Venue] ทดสอบการเชื่อมต่อ LINE OA สำเร็จเรียบร้อยแล้ว!",
+    },
+    flexMsg,
+  ];
+
+  if (sendMode === "broadcast" || !targetId) {
+    return broadcastLineMessage({ token, messages });
+  }
 
   return pushLineMessage({
     token,
     targetId,
-    messages: [
-      {
-        type: "text",
-        text: "✅ [Understory Venue] ทดสอบการเชื่อมต่อ LINE OA สำเร็จเรียบร้อยแล้ว!",
-      },
-      flexMsg,
-    ],
+    messages,
   });
 }

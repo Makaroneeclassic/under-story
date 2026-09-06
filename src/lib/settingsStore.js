@@ -19,6 +19,7 @@ const defaultSettings = {
   enableLineNotify: false,
   lineChannelAccessToken: "",
   lineTargetId: "",
+  lineSendMode: "broadcast", // "broadcast" (anyone who adds the bot) | "push" (specific target ID)
   updatedAt: new Date().toISOString(),
 };
 
@@ -87,6 +88,7 @@ export async function getSettings() {
           lineChannelAccessToken:
             data.line_channel_access_token || local.lineChannelAccessToken || "",
           lineTargetId: data.line_target_id || local.lineTargetId || "",
+          lineSendMode: data.line_send_mode || local.lineSendMode || "broadcast",
           updatedAt: data.updated_at || local.updatedAt,
         };
       }
@@ -127,6 +129,7 @@ export async function updateSettings(newSettings) {
         enable_line_notify: updated.enableLineNotify,
         line_channel_access_token: updated.lineChannelAccessToken,
         line_target_id: updated.lineTargetId,
+        line_send_mode: updated.lineSendMode,
         updated_at: updated.updatedAt,
       };
 

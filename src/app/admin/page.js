@@ -42,6 +42,7 @@ export default function AdminDashboardPage() {
     enableLineNotify: false,
     lineChannelAccessToken: "",
     lineTargetId: "",
+    lineSendMode: "broadcast", // "broadcast" | "push"
   });
   const [loadingSettings, setLoadingSettings] = useState(true);
   const [savingSettings, setSavingSettings] = useState(false);
@@ -50,10 +51,18 @@ export default function AdminDashboardPage() {
   const [lineTestResult, setLineTestResult] = useState(null);
 
   const handleTestLine = async () => {
-    if (!settings.lineChannelAccessToken?.trim() || !settings.lineTargetId?.trim()) {
+    if (!settings.lineChannelAccessToken?.trim()) {
       setLineTestResult({
         type: "error",
-        text: "กรุณากรอกทั้ง LINE Channel Access Token และ Target ID ก่อนกดทดสอบ",
+        text: "กรุณากรอก LINE Channel Access Token ก่อนกดทดสอบ",
+      });
+      return;
+    }
+
+    if (settings.lineSendMode === "push" && !settings.lineTargetId?.trim()) {
+      setLineTestResult({
+        type: "error",
+        text: "ในโหมด Push กรุณากรอก Target ID (User ID หรือ Group ID) ด้วยครับ",
       });
       return;
     }
@@ -67,6 +76,7 @@ export default function AdminDashboardPage() {
         body: JSON.stringify({
           token: settings.lineChannelAccessToken,
           targetId: settings.lineTargetId,
+          sendMode: settings.lineSendMode || "broadcast",
         }),
       });
       const data = await res.json();
@@ -666,6 +676,69 @@ export default function AdminDashboardPage() {
                 </div>
 
                 <div className="space-y-4 mt-5 pt-4 border-t border-stone-100">
+                  {/* Send Mode Selection */}
+                  <div className="space-y-2">
+                    <label className="block text-xs font-semibold text-[#4A4742]">
+                      รูปแบบการส่งแจ้งเตือน (Notification Mode)
+                    </label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <label
+                        className={`border rounded-lg p-3.5 flex items-start gap-3 cursor-pointer transition-all ${
+                          (settings.lineSendMode || "broadcast") === "broadcast"
+                            ? "bg-[#06C755]/5 border-[#06C755] ring-1 ring-[#06C755]"
+                            : "bg-[#FAF9F5] border-[#9C8B72]/30 hover:border-[#665340]"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="lineSendMode"
+                          value="broadcast"
+                          checked={(settings.lineSendMode || "broadcast") === "broadcast"}
+                          onChange={(e) =>
+                            setSettings({ ...settings, lineSendMode: e.target.value })
+                          }
+                          className="mt-0.5 accent-[#06C755]"
+                        />
+                        <div>
+                          <span className="font-semibold text-xs text-[#000000] block">
+                            📢 ส่งหาทุกคนที่แอดเพื่อน (Broadcast)
+                          </span>
+                          <span className="text-[11px] text-[#665340] block mt-0.5">
+                            ใครก็ตามในทีมที่กดเพิ่มเพื่อน (Add Friend) LINE OA นี้ จะได้รับข้อความแจ้งเตือน Lead เด้งเข้ามือถือทันที
+                          </span>
+                        </div>
+                      </label>
+
+                      <label
+                        className={`border rounded-lg p-3.5 flex items-start gap-3 cursor-pointer transition-all ${
+                          settings.lineSendMode === "push"
+                            ? "bg-[#06C755]/5 border-[#06C755] ring-1 ring-[#06C755]"
+                            : "bg-[#FAF9F5] border-[#9C8B72]/30 hover:border-[#665340]"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="lineSendMode"
+                          value="push"
+                          checked={settings.lineSendMode === "push"}
+                          onChange={(e) =>
+                            setSettings({ ...settings, lineSendMode: e.target.value })
+                          }
+                          className="mt-0.5 accent-[#06C755]"
+                        />
+                        <div>
+                          <span className="font-semibold text-xs text-[#000000] block">
+                            🎯 ส่งเฉพาะบุคคล หรือ กลุ่มไลน์ (Push)
+                          </span>
+                          <span className="text-[11px] text-[#665340] block mt-0.5">
+                            ระบุ User ID เฉพาะ หรือ Group ID ของกลุ่มไลน์ทีมงาน
+                          </span>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Channel Access Token */}
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
                       <label className="block text-xs font-semibold text-[#4A4742]">
@@ -694,27 +767,56 @@ export default function AdminDashboardPage() {
                     </span>
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-semibold text-[#4A4742]">
-                      2. Target ID (User ID หรือ Group ID)
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="เช่น Uxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx หรือ Cxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-                      value={settings.lineTargetId}
-                      onChange={(e) =>
-                        setSettings({ ...settings, lineTargetId: e.target.value })
-                      }
-                      className="w-full bg-[#FAF9F5] border border-[#9C8B72]/40 rounded-lg px-4 py-2.5 text-xs font-mono text-[#000000] focus:outline-none focus:border-[#06C755]"
-                    />
-                    <div className="text-[11px] text-[#9C8B72] space-y-0.5">
-                      <p>
-                        • <strong>แจ้งเตือนเข้าแชทส่วนตัว:</strong> ใส่ Your user ID (ขึ้นต้นด้วย U...) จากหน้า Basic Settings ใน LINE Developers
-                      </p>
-                      <p>
-                        • <strong>แจ้งเตือนเข้ากลุ่มไลน์ทีมงาน:</strong> ใส่ Group ID (ขึ้นต้นด้วย C...) และต้องเชิญ LINE OA บอทเข้าร่วมกลุ่มนั้นด้วย
+                  {/* Target ID (Conditional on push mode) */}
+                  {settings.lineSendMode === "push" ? (
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-semibold text-[#4A4742]">
+                        2. Target ID (User ID หรือ Group ID)
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="เช่น Uxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx หรือ Cxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                        value={settings.lineTargetId}
+                        onChange={(e) =>
+                          setSettings({ ...settings, lineTargetId: e.target.value })
+                        }
+                        className="w-full bg-[#FAF9F5] border border-[#9C8B72]/40 rounded-lg px-4 py-2.5 text-xs font-mono text-[#000000] focus:outline-none focus:border-[#06C755]"
+                      />
+                      <div className="text-[11px] text-[#9C8B72] space-y-0.5">
+                        <p>
+                          • <strong>แจ้งเตือนเข้าแชทส่วนตัว:</strong> ใส่ Your user ID (ขึ้นต้นด้วย U...) จากหน้า Basic Settings ใน LINE Developers
+                        </p>
+                        <p>
+                          • <strong>แจ้งเตือนเข้ากลุ่มไลน์ทีมงาน:</strong> ใส่ Group ID (ขึ้นต้นด้วย C...) และต้องเชิญ LINE OA บอทเข้าร่วมกลุ่มนั้นด้วย
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-emerald-50/70 border border-emerald-200/60 rounded-lg p-3 text-xs text-emerald-900 space-y-1">
+                      <div className="font-semibold flex items-center gap-1.5 text-[#06C755]">
+                        <span className="material-symbols-outlined text-sm">groups</span>
+                        โหมด Broadcast ทำงานอย่างไร?
+                      </div>
+                      <p className="text-[11px] leading-relaxed text-stone-700">
+                        คุณไม่ต้องหาหรือกรอก User ID เลยครับ เพียงแค่ส่ง <strong>QR Code หรือลิงก์เพิ่มเพื่อนของ LINE OA ตัวใหม่นี้</strong> ให้ทีมงานหรือผู้บริหารแอดเพื่อนไว้ ทุกคนที่แอดจะได้รับข้อความแจ้งเตือน Lead เด้งเข้าห้องแชทพร้อมกันทันทีที่มีคนกรอกฟอร์มครับ
                       </p>
                     </div>
+                  )}
+
+                  {/* Webhook Hint */}
+                  <div className="bg-[#FAF9F5] border border-[#9C8B72]/30 rounded-lg p-3 text-xs space-y-1">
+                    <span className="font-semibold text-stone-800 text-[11px] block">
+                      💡 เคล็ดลับ: ตั้งค่า Webhook ทักทายอัตโนมัติเมื่อทีมงานกดแอดเพื่อน
+                    </span>
+                    <p className="text-[11px] text-[#665340]">
+                      ใน LINE Developers &gt; Messaging API &gt; Webhook URL คุณสามารถใส่ URL นี้:
+                    </p>
+                    <code className="block bg-white px-2.5 py-1.5 rounded border border-stone-200 font-mono text-[11px] text-stone-800 select-all">
+                      https://under-story.vercel.app/api/line/webhook
+                    </code>
+                    <p className="text-[10px] text-[#9C8B72]">
+                      เมื่อทีมงานกดแอดบอท บอทจะส่งข้อความต้อนรับยืนยันว่าเชื่อมต่อระบบแจ้งเตือนสำเร็จทันที
+                    </p>
                   </div>
 
                   {/* Test LINE Notification Button */}
