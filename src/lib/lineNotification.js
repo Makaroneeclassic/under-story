@@ -1,0 +1,364 @@
+import { getSettings } from "./settingsStore.js";
+
+/**
+ * Get active LINE OA Messaging API configuration
+ */
+export async function getLineConfig() {
+  try {
+    const settings = await getSettings();
+    const token =
+      settings?.lineChannelAccessToken?.trim() ||
+      process.env.LINE_CHANNEL_ACCESS_TOKEN?.trim() ||
+      "";
+    const targetId =
+      settings?.lineTargetId?.trim() ||
+      process.env.LINE_TARGET_ID?.trim() ||
+      process.env.LINE_USER_ID?.trim() ||
+      process.env.LINE_GROUP_ID?.trim() ||
+      "";
+    const enabled =
+      typeof settings?.enableLineNotify === "boolean"
+        ? settings.enableLineNotify
+        : Boolean(token && targetId);
+
+    return { token, targetId, enabled };
+  } catch (error) {
+    console.error("Error loading LINE config:", error);
+    return {
+      token: process.env.LINE_CHANNEL_ACCESS_TOKEN?.trim() || "",
+      targetId:
+        process.env.LINE_TARGET_ID?.trim() ||
+        process.env.LINE_USER_ID?.trim() ||
+        process.env.LINE_GROUP_ID?.trim() ||
+        "",
+      enabled: false,
+    };
+  }
+}
+
+/**
+ * Format Thai date/time string
+ */
+function formatThaiDateTime(dateInput) {
+  try {
+    const date = dateInput ? new Date(dateInput) : new Date();
+    return date.toLocaleString("th-TH", {
+      timeZone: "Asia/Bangkok",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } catch {
+    return new Date().toISOString();
+  }
+}
+
+/**
+ * Create LINE Flex Message payload for a new Lead
+ */
+export function createLeadFlexMessage(lead, adminUrl = "https://under-story.vercel.app/admin") {
+  const fullName = `${lead.firstName || ""} ${lead.lastName || ""}`.trim() || "ไม่ระบุชื่อ";
+  const phone = lead.phone || "ไม่ระบุ";
+  const eventMonth = lead.eventMonth || "ไม่ระบุ";
+  const notes = lead.notes || "-";
+  const formattedTime = formatThaiDateTime(lead.createdAt);
+
+  const cleanPhone = phone.replace(/[^0-9+]/g, "");
+
+  return {
+    type: "flex",
+    altText: `🔔 มี Lead ใหม่: คุณ ${fullName} (${phone})`,
+    contents: {
+      type: "bubble",
+      size: "mega",
+      header: {
+        type: "box",
+        layout: "vertical",
+        backgroundColor: "#1F1D1A",
+        paddingAll: "20px",
+        paddingBottom: "16px",
+        contents: [
+          {
+            type: "text",
+            text: "UNDERSTORY VENUE",
+            weight: "bold",
+            color: "#D3CCC0",
+            size: "xxs",
+            letterSpacing: "3px",
+          },
+          {
+            type: "text",
+            text: "🌿 มี Lead ใหม่ติดต่อเข้ามา!",
+            weight: "bold",
+            color: "#FFFFFF",
+            size: "lg",
+            margin: "sm",
+          },
+          {
+            type: "text",
+            text: "แบบฟอร์มลงทะเบียนแสดงความสนใจจัดงาน",
+            color: "#9C8B72",
+            size: "xs",
+            margin: "xs",
+          },
+        ],
+      },
+      body: {
+        type: "box",
+        layout: "vertical",
+        backgroundColor: "#FAF9F5",
+        paddingAll: "20px",
+        spacing: "md",
+        contents: [
+          {
+            type: "box",
+            layout: "horizontal",
+            contents: [
+              {
+                type: "text",
+                text: "👤 ชื่อลูกค้า",
+                size: "xs",
+                color: "#665340",
+                flex: 3,
+                weight: "bold",
+              },
+              {
+                type: "text",
+                text: fullName,
+                size: "sm",
+                color: "#1C1917",
+                flex: 7,
+                weight: "bold",
+                wrap: true,
+              },
+            ],
+          },
+          {
+            type: "box",
+            layout: "horizontal",
+            contents: [
+              {
+                type: "text",
+                text: "📞 เบอร์โทร",
+                size: "xs",
+                color: "#665340",
+                flex: 3,
+                weight: "bold",
+              },
+              {
+                type: "text",
+                text: phone,
+                size: "sm",
+                color: "#1E3A8A",
+                flex: 7,
+                weight: "bold",
+              },
+            ],
+          },
+          {
+            type: "box",
+            layout: "horizontal",
+            contents: [
+              {
+                type: "text",
+                text: "📅 เดือนจัดงาน",
+                size: "xs",
+                color: "#665340",
+                flex: 3,
+                weight: "bold",
+              },
+              {
+                type: "text",
+                text: eventMonth,
+                size: "xs",
+                color: "#1C1917",
+                flex: 7,
+                wrap: true,
+              },
+            ],
+          },
+          {
+            type: "box",
+            layout: "horizontal",
+            contents: [
+              {
+                type: "text",
+                text: "📝 หมายเหตุ",
+                size: "xs",
+                color: "#665340",
+                flex: 3,
+                weight: "bold",
+              },
+              {
+                type: "text",
+                text: notes,
+                size: "xs",
+                color: "#4A4742",
+                flex: 7,
+                wrap: true,
+              },
+            ],
+          },
+          {
+            type: "separator",
+            margin: "md",
+            color: "#E5E0D8",
+          },
+          {
+            type: "box",
+            layout: "horizontal",
+            margin: "md",
+            contents: [
+              {
+                type: "text",
+                text: "⏰ เวลาส่งข้อมูล",
+                size: "xxs",
+                color: "#9C8B72",
+                flex: 3,
+              },
+              {
+                type: "text",
+                text: formattedTime,
+                size: "xxs",
+                color: "#9C8B72",
+                flex: 7,
+              },
+            ],
+          },
+        ],
+      },
+      footer: {
+        type: "box",
+        layout: "vertical",
+        spacing: "sm",
+        backgroundColor: "#FFFFFF",
+        paddingAll: "16px",
+        contents: [
+          ...(cleanPhone
+            ? [
+                {
+                  type: "button",
+                  style: "primary",
+                  height: "sm",
+                  color: "#166534",
+                  action: {
+                    type: "uri",
+                    label: `📞 โทรหาลูกค้า (${cleanPhone})`,
+                    uri: `tel:${cleanPhone}`,
+                  },
+                },
+              ]
+            : []),
+          {
+            type: "button",
+            style: "secondary",
+            height: "sm",
+            color: "#665340",
+            action: {
+              type: "uri",
+              label: "📊 ดูข้อมูลใน Admin Dashboard",
+              uri: adminUrl,
+            },
+          },
+        ],
+      },
+    },
+  };
+}
+
+/**
+ * Send Push Message via LINE Messaging API
+ */
+export async function pushLineMessage({ token, targetId, messages }) {
+  if (!token || !targetId) {
+    throw new Error("Missing LINE token or targetId");
+  }
+
+  const response = await fetch("https://api.line.me/v2/bot/message/push", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      to: targetId,
+      messages: Array.isArray(messages) ? messages : [messages],
+    }),
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    const errorMsg =
+      data?.message ||
+      data?.details?.[0]?.message ||
+      `LINE API returned status ${response.status}`;
+    throw new Error(errorMsg);
+  }
+
+  return { success: true, data };
+}
+
+/**
+ * Send notification for a newly created lead
+ */
+export async function sendLineLeadNotification(lead) {
+  try {
+    const { token, targetId, enabled } = await getLineConfig();
+
+    if (!enabled || !token || !targetId) {
+      // LINE notification disabled or not configured
+      return { success: false, reason: "disabled_or_unconfigured" };
+    }
+
+    const host =
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      (process.env.VERCEL_PROJECT_PRODUCTION_URL
+        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+        : "https://under-story.vercel.app");
+    const adminUrl = `${host.replace(/\/$/, "")}/admin`;
+
+    const flexMsg = createLeadFlexMessage(lead, adminUrl);
+
+    await pushLineMessage({
+      token,
+      targetId,
+      messages: [flexMsg],
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to send LINE lead notification:", error.message || error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * Send test notification from Admin page
+ */
+export async function sendLineTestNotification({ token, targetId }) {
+  const dummyLead = {
+    firstName: "ทดสอบ",
+    lastName: "ระบบแจ้งเตือน",
+    phone: "089-999-9999",
+    eventMonth: "พฤศจิกายน 2568",
+    notes: "นี่คือข้อความทดสอบการเชื่อมต่อ LINE Official Account (Messaging API)",
+    createdAt: new Date().toISOString(),
+  };
+
+  const flexMsg = createLeadFlexMessage(dummyLead);
+
+  return pushLineMessage({
+    token,
+    targetId,
+    messages: [
+      {
+        type: "text",
+        text: "✅ [Understory Venue] ทดสอบการเชื่อมต่อ LINE OA สำเร็จเรียบร้อยแล้ว!",
+      },
+      flexMsg,
+    ],
+  });
+}

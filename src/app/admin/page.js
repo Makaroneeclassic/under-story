@@ -39,10 +39,48 @@ export default function AdminDashboardPage() {
     tiktokPixelId: "",
     customHeadScript: "",
     customBodyScript: "",
+    enableLineNotify: false,
+    lineChannelAccessToken: "",
+    lineTargetId: "",
   });
   const [loadingSettings, setLoadingSettings] = useState(true);
   const [savingSettings, setSavingSettings] = useState(false);
   const [settingsMessage, setSettingsMessage] = useState(null);
+  const [testingLine, setTestingLine] = useState(false);
+  const [lineTestResult, setLineTestResult] = useState(null);
+
+  const handleTestLine = async () => {
+    if (!settings.lineChannelAccessToken?.trim() || !settings.lineTargetId?.trim()) {
+      setLineTestResult({
+        type: "error",
+        text: "กรุณากรอกทั้ง LINE Channel Access Token และ Target ID ก่อนกดทดสอบ",
+      });
+      return;
+    }
+
+    setTestingLine(true);
+    setLineTestResult(null);
+    try {
+      const res = await fetch("/api/line/test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          token: settings.lineChannelAccessToken,
+          targetId: settings.lineTargetId,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setLineTestResult({ type: "success", text: data.message });
+      } else {
+        setLineTestResult({ type: "error", text: data.message || "ส่งข้อความไม่สำเร็จ" });
+      }
+    } catch (err) {
+      setLineTestResult({ type: "error", text: "ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์เพื่อทดสอบ LINE ได้" });
+    } finally {
+      setTestingLine(false);
+    }
+  };
 
   // Fetch Leads
   useEffect(() => {
@@ -285,9 +323,13 @@ export default function AdminDashboardPage() {
                 : "bg-white/60 text-[#4A4742] hover:bg-white"
             }`}
           >
-            <span className="material-symbols-outlined text-base">analytics</span>
-            การตลาด &amp; Tracking (GA4, GTM, Pixel)
-            {(settings.enableGA4 || settings.enableGTM || settings.enableFBPixel || settings.enableTikTokPixel) && (
+            <span className="material-symbols-outlined text-base">notifications_active</span>
+            การตลาด & แจ้งเตือน LINE OA
+            {(settings.enableGA4 ||
+              settings.enableGTM ||
+              settings.enableFBPixel ||
+              settings.enableTikTokPixel ||
+              settings.enableLineNotify) && (
               <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
             )}
           </button>
@@ -586,6 +628,131 @@ export default function AdminDashboardPage() {
             )}
 
             <form onSubmit={handleSaveSettings} className="space-y-6">
+              {/* Card 0: LINE Official Account (LINE Messaging API) */}
+              <div className="bg-white p-6 sm:p-8 rounded-xl border border-[#06C755]/30 shadow-xs ring-1 ring-[#06C755]/10">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-[#06C755] flex items-center justify-center text-white font-bold shadow-xs">
+                      <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
+                        <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.627.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.08.495.235l2.476 3.349V8.108c0-.345.279-.63.63-.63.346 0 .626.285.626.63v4.771h.045zm-7.067-4.141v4.141c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63zm-2.466 4.771H3.591c-.348 0-.63-.285-.63-.629V8.108c0-.345.282-.63.63-.63.349 0 .63.285.63.63v4.141h1.757c.348 0 .63.285.63.629 0 .344-.282.629-.63.629zM24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-serif text-lg font-bold text-[#000000]">
+                          LINE Official Account (LINE Messaging API)
+                        </h3>
+                        <span className="bg-[#06C755]/10 text-[#06C755] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#06C755]/20">
+                          แนะนำ
+                        </span>
+                      </div>
+                      <p className="text-xs text-[#665340]">
+                        แจ้งเตือน Lead ใหม่เข้า LINE มือถือหรือกลุ่มไลน์ทีมงานทันที พร้อมปุ่มโทรออกหาลูกค้าได้เลย
+                      </p>
+                    </div>
+                  </div>
+
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={settings.enableLineNotify}
+                      onChange={(e) =>
+                        setSettings({ ...settings, enableLineNotify: e.target.checked })
+                      }
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-stone-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#06C755]"></div>
+                  </label>
+                </div>
+
+                <div className="space-y-4 mt-5 pt-4 border-t border-stone-100">
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-xs font-semibold text-[#4A4742]">
+                        1. LINE Channel Access Token (Long-Lived)
+                      </label>
+                      <a
+                        href="https://developers.line.biz/console/"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-[11px] text-[#06C755] hover:underline flex items-center gap-1 font-medium"
+                      >
+                        เปิด LINE Developers Console ↗
+                      </a>
+                    </div>
+                    <input
+                      type="password"
+                      placeholder="วาง Channel Access Token (Long-Lived) ที่นี่..."
+                      value={settings.lineChannelAccessToken}
+                      onChange={(e) =>
+                        setSettings({ ...settings, lineChannelAccessToken: e.target.value })
+                      }
+                      className="w-full bg-[#FAF9F5] border border-[#9C8B72]/40 rounded-lg px-4 py-2.5 text-xs font-mono text-[#000000] focus:outline-none focus:border-[#06C755]"
+                    />
+                    <span className="text-[11px] text-[#9C8B72] block">
+                      คัดลอกจากแท็บ <strong>Messaging API &gt; Channel access token (long-lived)</strong>
+                    </span>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-semibold text-[#4A4742]">
+                      2. Target ID (User ID หรือ Group ID)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="เช่น Uxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx หรือ Cxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                      value={settings.lineTargetId}
+                      onChange={(e) =>
+                        setSettings({ ...settings, lineTargetId: e.target.value })
+                      }
+                      className="w-full bg-[#FAF9F5] border border-[#9C8B72]/40 rounded-lg px-4 py-2.5 text-xs font-mono text-[#000000] focus:outline-none focus:border-[#06C755]"
+                    />
+                    <div className="text-[11px] text-[#9C8B72] space-y-0.5">
+                      <p>
+                        • <strong>แจ้งเตือนเข้าแชทส่วนตัว:</strong> ใส่ Your user ID (ขึ้นต้นด้วย U...) จากหน้า Basic Settings ใน LINE Developers
+                      </p>
+                      <p>
+                        • <strong>แจ้งเตือนเข้ากลุ่มไลน์ทีมงาน:</strong> ใส่ Group ID (ขึ้นต้นด้วย C...) และต้องเชิญ LINE OA บอทเข้าร่วมกลุ่มนั้นด้วย
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Test LINE Notification Button */}
+                  <div className="pt-2 flex flex-col sm:flex-row sm:items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={handleTestLine}
+                      disabled={testingLine}
+                      className="inline-flex items-center justify-center gap-2 bg-[#06C755] hover:bg-[#05B34C] text-white px-5 py-2.5 rounded-lg text-xs font-semibold tracking-wider transition-all shadow-xs cursor-pointer disabled:opacity-50"
+                    >
+                      {testingLine ? (
+                        <>
+                          <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          กำลังส่งข้อความทดสอบ...
+                        </>
+                      ) : (
+                        <>
+                          <span className="material-symbols-outlined text-sm">send</span>
+                          ทดสอบส่งข้อความแจ้งเตือนเข้า LINE
+                        </>
+                      )}
+                    </button>
+
+                    {lineTestResult && (
+                      <div
+                        className={`text-xs px-3.5 py-2 rounded-lg flex items-center gap-2 ${
+                          lineTestResult.type === "success"
+                            ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
+                            : "bg-red-50 text-red-800 border border-red-200"
+                        }`}
+                      >
+                        <span>{lineTestResult.text}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
               {/* Card 1: Google Tag Manager (GTM) */}
               <div className="bg-white p-6 sm:p-8 rounded-xl border border-[#9C8B72]/25 shadow-xs">
                 <div className="flex items-start justify-between mb-4">

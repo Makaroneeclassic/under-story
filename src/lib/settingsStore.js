@@ -16,6 +16,9 @@ const defaultSettings = {
   tiktokPixelId: "",
   customHeadScript: "",
   customBodyScript: "",
+  enableLineNotify: false,
+  lineChannelAccessToken: "",
+  lineTargetId: "",
   updatedAt: new Date().toISOString(),
 };
 
@@ -53,6 +56,8 @@ function saveLocalSettings(settings) {
 
 // 1. GET SETTINGS (Supabase with Local fallback)
 export async function getSettings() {
+  const local = getLocalSettings();
+
   if (isSupabaseConfigured && supabase) {
     try {
       const { data, error } = await supabase
@@ -75,7 +80,14 @@ export async function getSettings() {
           tiktokPixelId: data.tiktok_pixel_id || "",
           customHeadScript: data.custom_head_script || "",
           customBodyScript: data.custom_body_script || "",
-          updatedAt: data.updated_at,
+          enableLineNotify:
+            data.enable_line_notify !== undefined
+              ? Boolean(data.enable_line_notify)
+              : local.enableLineNotify,
+          lineChannelAccessToken:
+            data.line_channel_access_token || local.lineChannelAccessToken || "",
+          lineTargetId: data.line_target_id || local.lineTargetId || "",
+          updatedAt: data.updated_at || local.updatedAt,
         };
       }
     } catch (err) {
@@ -83,7 +95,7 @@ export async function getSettings() {
     }
   }
 
-  return getLocalSettings();
+  return local;
 }
 
 // 2. UPDATE SETTINGS (Supabase with Local fallback)
@@ -95,9 +107,13 @@ export async function updateSettings(newSettings) {
     updatedAt: new Date().toISOString(),
   };
 
+  // Always save to local backup
+  saveLocalSettings(updated);
+
   if (isSupabaseConfigured && supabase) {
     try {
-      const payload = {
+      // First try full payload with LINE settings
+      const fullPayload = {
         enable_gtm: updated.enableGTM,
         gtm_id: updated.gtmId,
         enable_ga4: updated.enableGA4,
@@ -108,25 +124,50 @@ export async function updateSettings(newSettings) {
         tiktok_pixel_id: updated.tiktokPixelId,
         custom_head_script: updated.customHeadScript,
         custom_body_script: updated.customBodyScript,
+        enable_line_notify: updated.enableLineNotify,
+        line_channel_access_token: updated.lineChannelAccessToken,
+        line_target_id: updated.lineTargetId,
         updated_at: updated.updatedAt,
       };
 
       const { data: updateData, error: updateError } = await supabase
         .from("settings")
-        .update(payload)
+        .update(fullPayload)
         .eq("id", "global")
         .select();
 
-      if (updateError || !updateData || updateData.length === 0) {
-        // If not exists yet, insert
-        await supabase.from("settings").insert({ id: "global", ...payload });
+      if (!updateError && (!updateData || updateData.length === 0)) {
+        await supabase.from("settings").insert({ id: "global", ...fullPayload });
+      }
+
+      // If error occurred (e.g. columns don't exist yet in Supabase), fallback to base payload
+      if (updateError) {
+        console.warn(
+          "Supabase update with full payload failed, trying base tracking payload:",
+          updateError.message
+        );
+        const basePayload = {
+          enable_gtm: updated.enableGTM,
+          gtm_id: updated.gtmId,
+          enable_ga4: updated.enableGA4,
+          ga4_id: updated.ga4Id,
+          enable_fb_pixel: updated.enableFBPixel,
+          fb_pixel_id: updated.fbPixelId,
+          enable_tiktok_pixel: updated.enableTikTokPixel,
+          tiktok_pixel_id: updated.tiktokPixelId,
+          custom_head_script: updated.customHeadScript,
+          custom_body_script: updated.customBodyScript,
+          updated_at: updated.updatedAt,
+        };
+
+        await supabase.from("settings").update(basePayload).eq("id", "global");
       }
 
       return updated;
     } catch (err) {
-      console.error("Supabase updateSettings error, falling back to local:", err);
+      console.error("Supabase updateSettings error, local settings preserved:", err);
     }
   }
 
-  return saveLocalSettings(updated);
+  return updated;
 }

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAllLeads, createLead, updateLeadStatus, deleteLeadById } from "@/lib/leadsStore";
+import { sendLineLeadNotification } from "@/lib/lineNotification";
 
 // GET: Fetch all leads (sorted newest first)
 export async function GET() {
@@ -37,6 +38,11 @@ export async function POST(request) {
       eventMonth: eventMonth ? eventMonth.trim() : "ยังไม่ระบุ",
       phone: phone.trim(),
       notes: notes || "",
+    });
+
+    // Send LINE OA notification in background (non-blocking)
+    sendLineLeadNotification(newLead).catch((err) => {
+      console.error("LINE lead notification error:", err);
     });
 
     return NextResponse.json(

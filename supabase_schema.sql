@@ -39,12 +39,20 @@ CREATE TABLE IF NOT EXISTS public.settings (
     tiktok_pixel_id TEXT DEFAULT '',
     custom_head_script TEXT DEFAULT '',
     custom_body_script TEXT DEFAULT '',
+    enable_line_notify BOOLEAN DEFAULT false,
+    line_channel_access_token TEXT DEFAULT '',
+    line_target_id TEXT DEFAULT '',
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
+-- Migration for existing settings table (safe to run)
+ALTER TABLE public.settings ADD COLUMN IF NOT EXISTS enable_line_notify BOOLEAN DEFAULT false;
+ALTER TABLE public.settings ADD COLUMN IF NOT EXISTS line_channel_access_token TEXT DEFAULT '';
+ALTER TABLE public.settings ADD COLUMN IF NOT EXISTS line_target_id TEXT DEFAULT '';
+
 -- Seed initial settings row
-INSERT INTO public.settings (id, enable_gtm, gtm_id, enable_ga4, ga4_id, enable_fb_pixel, fb_pixel_id, enable_tiktok_pixel, tiktok_pixel_id, custom_head_script, custom_body_script)
-VALUES ('global', false, '', false, '', false, '', false, '', '', '')
+INSERT INTO public.settings (id, enable_gtm, gtm_id, enable_ga4, ga4_id, enable_fb_pixel, fb_pixel_id, enable_tiktok_pixel, tiktok_pixel_id, custom_head_script, custom_body_script, enable_line_notify, line_channel_access_token, line_target_id)
+VALUES ('global', false, '', false, '', false, '', false, '', '', '', false, '', '')
 ON CONFLICT (id) DO NOTHING;
 
 -- 3. CREATE ADMIN USERS TABLE (for Login Authentication)
