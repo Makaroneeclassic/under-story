@@ -60,7 +60,7 @@ function formatThaiDateTime(dateInput) {
 /**
  * Create LINE Flex Message payload for a new Lead
  */
-export function createLeadFlexMessage(lead, adminUrl = "https://under-story.vercel.app/admin") {
+export function createLeadFlexMessage(lead, adminUrl = "https://understoryvenue.com/admin") {
   const fullName = `${lead.firstName || ""} ${lead.lastName || ""}`.trim() || "ไม่ระบุชื่อ";
   const phone = lead.phone || "ไม่ระบุ";
   const eventMonth = lead.eventMonth || "ไม่ระบุ";
@@ -384,9 +384,7 @@ export async function sendLineLeadNotification(lead) {
 
     const host =
       process.env.NEXT_PUBLIC_SITE_URL ||
-      (process.env.VERCEL_PROJECT_PRODUCTION_URL
-        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-        : "https://under-story.vercel.app");
+      "https://understoryvenue.com";
     const adminUrl = `${host.replace(/\/$/, "")}/admin`;
 
     const flexMsg = createLeadFlexMessage(lead, adminUrl);

@@ -812,7 +812,9 @@ export default function AdminDashboardPage() {
                       ใน LINE Developers &gt; Messaging API &gt; Webhook URL คุณสามารถใส่ URL นี้:
                     </p>
                     <code className="block bg-white px-2.5 py-1.5 rounded border border-stone-200 font-mono text-[11px] text-stone-800 select-all">
-                      https://under-story.vercel.app/api/line/webhook
+                      {typeof window !== "undefined"
+                        ? `${window.location.origin}/api/line/webhook`
+                        : "https://understoryvenue.com/api/line/webhook"}
                     </code>
                     <p className="text-[10px] text-[#9C8B72]">
                       เมื่อทีมงานกดแอดบอท บอทจะส่งข้อความต้อนรับยืนยันว่าเชื่อมต่อระบบแจ้งเตือนสำเร็จทันที
