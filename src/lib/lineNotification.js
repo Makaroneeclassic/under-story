@@ -3,13 +3,16 @@ import { getSettings } from "./settingsStore.js";
 /**
  * Get active LINE OA Messaging API configuration
  */
+const DEFAULT_LINE_TOKEN =
+  "0vjbGCrH7ewxX7ONv09MifjQftiHNIezT6HF/cHr9Voasgv0ncL2jIjxk6NSfhNIJlFwFbabfCeqvx28h2Bf8V6VuGalAi3IH/EtpmV0hkXXdj/vKY9ueloykCStspEECMGPtn/VXhQrN+8pMS/y8AdB04t89/1O/w1cDnyilFU=";
+
 export async function getLineConfig() {
   try {
     const settings = await getSettings();
     const token =
       settings?.lineChannelAccessToken?.trim() ||
       process.env.LINE_CHANNEL_ACCESS_TOKEN?.trim() ||
-      "";
+      DEFAULT_LINE_TOKEN;
     const targetId =
       settings?.lineTargetId?.trim() ||
       process.env.LINE_TARGET_ID?.trim() ||
@@ -24,15 +27,11 @@ export async function getLineConfig() {
 
     return { token, targetId, enabled, sendMode };
   } catch (error) {
-    console.error("Error loading LINE config:", error);
+    console.error("Error loading LINE config, using default fallback:", error);
     return {
-      token: process.env.LINE_CHANNEL_ACCESS_TOKEN?.trim() || "",
-      targetId:
-        process.env.LINE_TARGET_ID?.trim() ||
-        process.env.LINE_USER_ID?.trim() ||
-        process.env.LINE_GROUP_ID?.trim() ||
-        "",
-      enabled: false,
+      token: process.env.LINE_CHANNEL_ACCESS_TOKEN?.trim() || DEFAULT_LINE_TOKEN,
+      targetId: process.env.LINE_TARGET_ID?.trim() || "",
+      enabled: true,
       sendMode: "broadcast",
     };
   }
@@ -372,12 +371,12 @@ export async function pushLineMessage({ token, targetId, messages }) {
  * Send notification for a newly created lead
  * Supports both Broadcast (to all friends who added the bot) and Push (to specific user/group ID)
  */
-export async function sendLineLeadNotification(lead) {
+export async function sendLineLeadNotification(lead, retryCount = 1) {
   try {
     const { token, targetId, enabled, sendMode } = await getLineConfig();
 
     if (!enabled || !token) {
-      // LINE notification disabled or not configured
+      console.warn("[LINE Notify] Skipped: disabled or unconfigured", { enabled, hasToken: Boolean(token) });
       return { success: false, reason: "disabled_or_unconfigured" };
     }
 
@@ -388,24 +387,35 @@ export async function sendLineLeadNotification(lead) {
 
     const flexMsg = createLeadFlexMessage(lead, adminUrl);
 
-    // If sendMode is broadcast OR no targetId is set, broadcast to everyone who added the bot!
-    if (sendMode === "broadcast" || !targetId) {
-      await broadcastLineMessage({
-        token,
-        messages: [flexMsg],
-      });
-    } else {
-      // Otherwise push to specific User ID / Group ID
-      await pushLineMessage({
-        token,
-        targetId,
-        messages: [flexMsg],
-      });
+    let lastError = null;
+    for (let attempt = 0; attempt <= retryCount; attempt++) {
+      try {
+        if (sendMode === "broadcast" || !targetId) {
+          await broadcastLineMessage({
+            token,
+            messages: [flexMsg],
+          });
+        } else {
+          await pushLineMessage({
+            token,
+            targetId,
+            messages: [flexMsg],
+          });
+        }
+        console.log(`[LINE Notify] Successfully delivered lead notification for ${lead.firstName || "Customer"}`);
+        return { success: true };
+      } catch (err) {
+        lastError = err;
+        console.error(`[LINE Notify] Attempt ${attempt + 1} failed:`, err.message);
+        if (attempt < retryCount) {
+          await new Promise((resolve) => setTimeout(resolve, 600));
+        }
+      }
     }
 
-    return { success: true };
+    return { success: false, error: lastError?.message || "Send failed after retries" };
   } catch (error) {
-    console.error("Failed to send LINE lead notification:", error.message || error);
+    console.error("[LINE Notify] Failed to send LINE lead notification:", error.message || error);
     return { success: false, error: error.message };
   }
 }

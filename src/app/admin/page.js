@@ -26,6 +26,8 @@ export default function AdminDashboardPage() {
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [monthFilter, setMonthFilter] = useState("ALL");
   const [copiedId, setCopiedId] = useState(null);
+  const [resendingLineId, setResendingLineId] = useState(null);
+  const [resendStatusMsg, setResendStatusMsg] = useState(null);
 
   // --- Tracking Settings State ---
   const [settings, setSettings] = useState({
@@ -188,6 +190,30 @@ export default function AdminDashboardPage() {
     navigator.clipboard.writeText(text);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  // Resend lead notification into LINE
+  const handleResendLeadLine = async (leadId) => {
+    setResendingLineId(leadId);
+    setResendStatusMsg(null);
+    try {
+      const res = await fetch("/api/leads/notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ leadId }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setResendStatusMsg({ type: "success", text: data.message || "ส่งเข้า LINE สำเร็จแล้ว!" });
+      } else {
+        setResendStatusMsg({ type: "error", text: data.message || "ส่งไม่สำเร็จ กรุณาตรวจสอบ Token" });
+      }
+    } catch (err) {
+      setResendStatusMsg({ type: "error", text: "ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้" });
+    } finally {
+      setResendingLineId(null);
+      setTimeout(() => setResendStatusMsg(null), 5000);
+    }
   };
 
   // Save Tracking Settings
@@ -394,6 +420,30 @@ export default function AdminDashboardPage() {
               </div>
             </section>
 
+            {/* Resend to LINE Notification Banner */}
+            {resendStatusMsg && (
+              <div
+                className={`mb-6 p-4 rounded-xl text-xs font-medium flex items-center justify-between shadow-xs ${
+                  resendStatusMsg.type === "success"
+                    ? "bg-emerald-50 text-emerald-900 border border-emerald-200"
+                    : "bg-red-50 text-red-900 border border-red-200"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-sm text-[#06C755]">
+                    {resendStatusMsg.type === "success" ? "check_circle" : "error"}
+                  </span>
+                  <span>{resendStatusMsg.text}</span>
+                </div>
+                <button
+                  onClick={() => setResendStatusMsg(null)}
+                  className="text-stone-400 hover:text-stone-700 text-sm ml-2 cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+
             {/* Filters & Search Toolbar */}
             <section className="bg-white p-4 rounded-xl border border-[#9C8B72]/20 shadow-xs mb-6 flex flex-col md:flex-row gap-4 justify-between items-center">
               {/* Search Box */}
@@ -543,6 +593,16 @@ export default function AdminDashboardPage() {
                                 >
                                   <span className="material-symbols-outlined text-xs">call</span>
                                 </a>
+                                <button
+                                  onClick={() => handleResendLeadLine(lead.id)}
+                                  disabled={resendingLineId === lead.id}
+                                  className="text-[#06C755] hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 p-1 rounded-sm cursor-pointer disabled:opacity-50"
+                                  title="ส่งแจ้งเตือนเข้า LINE"
+                                >
+                                  <span className="material-symbols-outlined text-xs">
+                                    {resendingLineId === lead.id ? "hourglass_top" : "send"}
+                                  </span>
+                                </button>
                               </div>
                             </td>
 

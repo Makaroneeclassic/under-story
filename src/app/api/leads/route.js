@@ -40,10 +40,15 @@ export async function POST(request) {
       notes: notes || "",
     });
 
-    // Send LINE OA notification in background (non-blocking)
-    sendLineLeadNotification(newLead).catch((err) => {
+    // Send LINE OA notification (must await so Vercel / serverless runtime does not terminate before completion)
+    try {
+      const notifyResult = await sendLineLeadNotification(newLead);
+      if (!notifyResult?.success) {
+        console.warn("LINE lead notification status:", notifyResult);
+      }
+    } catch (err) {
       console.error("LINE lead notification error:", err);
-    });
+    }
 
     return NextResponse.json(
       {
