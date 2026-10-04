@@ -106,3 +106,62 @@ USING (true);
 CREATE POLICY "Allow public select on admin_users" 
 ON public.admin_users FOR SELECT 
 USING (true);
+
+-- =========================================================
+-- 5. CREATE POSTS TABLE (for Blog & SEO Articles)
+-- =========================================================
+CREATE TABLE IF NOT EXISTS public.posts (
+    id TEXT PRIMARY KEY,
+    title TEXT NOT NULL,
+    slug TEXT UNIQUE NOT NULL,
+    excerpt TEXT,
+    content TEXT NOT NULL,
+    featured_image TEXT,
+    featured_image_alt TEXT,
+    category TEXT DEFAULT 'Wedding Inspiration',
+    tags TEXT[] DEFAULT '{}',
+    status TEXT DEFAULT 'draft', -- 'draft' | 'published'
+    published_at TIMESTAMP WITH TIME ZONE,
+    
+    -- SEO Fields (WP / Rank Math Style)
+    meta_title TEXT,
+    meta_description TEXT,
+    focus_keyword TEXT,
+    canonical_url TEXT,
+    no_index BOOLEAN DEFAULT false,
+    no_follow BOOLEAN DEFAULT false,
+    og_title TEXT,
+    og_description TEXT,
+    og_image TEXT,
+    schema_type TEXT DEFAULT 'BlogPosting',
+    
+    views_count INTEGER DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Indexes for performance & search
+CREATE INDEX IF NOT EXISTS idx_posts_slug ON public.posts (slug);
+CREATE INDEX IF NOT EXISTS idx_posts_status ON public.posts (status);
+CREATE INDEX IF NOT EXISTS idx_posts_category ON public.posts (category);
+CREATE INDEX IF NOT EXISTS idx_posts_created_at ON public.posts (created_at DESC);
+
+-- Enable RLS for posts
+ALTER TABLE public.posts ENABLE ROW LEVEL SECURITY;
+
+-- Allow Public select on published posts, and authenticated/anon CRUD
+CREATE POLICY "Allow public select on published posts"
+ON public.posts FOR SELECT
+USING (true);
+
+CREATE POLICY "Allow public insert on posts"
+ON public.posts FOR INSERT
+WITH CHECK (true);
+
+CREATE POLICY "Allow public update on posts"
+ON public.posts FOR UPDATE
+USING (true);
+
+CREATE POLICY "Allow public delete on posts"
+ON public.posts FOR DELETE
+USING (true);

@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import AdminBlogView from "@/components/blog/AdminBlogView";
 
 const STATUS_CONFIG = {
   NEW: { label: "ใหม่ (ยังไม่ติดต่อ)", bg: "bg-amber-100 text-amber-900 border-amber-300" },
@@ -368,6 +369,18 @@ export default function AdminDashboardPage() {
               settings.enableLineNotify) && (
               <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
             )}
+          </button>
+
+          <button
+            onClick={() => setActiveTab("blog")}
+            className={`px-4 py-2 rounded-md text-xs font-semibold tracking-wider flex items-center gap-2 cursor-pointer transition-all ${
+              activeTab === "blog"
+                ? "bg-[#665340] text-white shadow-xs"
+                : "bg-white/60 text-[#4A4742] hover:bg-white"
+            }`}
+          >
+            <span className="material-symbols-outlined text-base">article</span>
+            จัดการบทความ & SEO (Blog)
           </button>
         </div>
       </header>
@@ -1144,6 +1157,9 @@ export default function AdminDashboardPage() {
             </form>
           </div>
         )}
+
+        {/* ================= TAB 3: BLOG & SEO MANAGEMENT ================= */}
+        {activeTab === "blog" && <AdminBlogView />}
       </main>
     </div>
   );

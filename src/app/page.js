@@ -276,6 +276,12 @@ export default function Home() {
             >
               GALLERY
             </Link>
+            <Link
+              className="font-label-caps text-label-caps text-[#4A4742] hover:text-[#000000] transition-colors tracking-widest py-1"
+              href="/blog"
+            >
+              BLOG
+            </Link>
           </nav>
         </div>
         <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center">
@@ -745,6 +751,12 @@ export default function Home() {
           >
             Press Kit
           </a>
+          <Link
+            className="font-body-md text-sm text-[#4A4742] hover:text-[#000000] transition-colors"
+            href="/blog"
+          >
+            Blog
+          </Link>
           <a
             className="font-body-md text-sm text-[#4A4742] hover:text-[#000000] transition-colors"
             href="https://www.instagram.com/understory.venue/"
