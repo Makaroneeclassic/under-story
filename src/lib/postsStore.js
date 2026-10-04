@@ -207,16 +207,16 @@ export async function getAllPosts({ status = "ALL", category = "ALL", search = "
       const { data, error } = await query;
       if (error) throw error;
 
-      if (data && data.length > 0) {
-        posts = data.map(formatPostFromDb);
-        return posts;
+      // If Supabase query succeeded, return Supabase data directly (even if empty [])
+      if (Array.isArray(data)) {
+        return data.map(formatPostFromDb);
       }
     } catch (err) {
       console.warn("Supabase getAllPosts error, falling back to local:", err.message);
     }
   }
 
-  // Fallback to local JSON
+  // Fallback to local JSON only if Supabase is offline or table does not exist yet
   posts = getLocalPosts();
   return posts.filter((p) => {
     const matchStatus = status === "ALL" || p.status === status;
@@ -243,7 +243,8 @@ export async function getPostBySlug(slug) {
         .maybeSingle();
 
       if (error) throw error;
-      if (data) return formatPostFromDb(data);
+      // If table exists and query succeeded, return result or null
+      return data ? formatPostFromDb(data) : null;
     } catch (err) {
       console.warn("Supabase getPostBySlug error, falling back to local:", err.message);
     }
@@ -266,7 +267,8 @@ export async function getPostById(id) {
         .maybeSingle();
 
       if (error) throw error;
-      if (data) return formatPostFromDb(data);
+      // If table exists and query succeeded, return result or null
+      return data ? formatPostFromDb(data) : null;
     } catch (err) {
       console.warn("Supabase getPostById error, falling back to local:", err.message);
     }
@@ -357,24 +359,42 @@ export async function updatePost(id, updates) {
     merged.published_at = now;
   }
 
+  let dbUpdated = false;
+  let dbError = null;
+
   // 1. Update Supabase
   if (isSupabaseConfigured && supabase) {
     try {
       const dbPayload = formatPostToDb(merged);
       delete dbPayload.id;
-      const { error } = await supabase.from("posts").update(dbPayload).eq("id", id);
-      if (error) throw error;
+      const { error, data } = await supabase.from("posts").update(dbPayload).eq("id", id).select();
+      if (error) {
+        dbError = error.message;
+        throw error;
+      }
+      if (data && data.length > 0) {
+        dbUpdated = true;
+      }
     } catch (err) {
+      dbError = err.message;
       console.warn("Supabase updatePost error, updating local backup:", err.message);
     }
   }
 
-  // 2. Update Local Backup
-  const localPosts = getLocalPosts();
-  const index = localPosts.findIndex((p) => p.id === id);
-  if (index !== -1) {
-    localPosts[index] = merged;
-    saveLocalPosts(localPosts);
+  // 2. Update Local Backup (safe for read-only filesystem)
+  let localUpdated = false;
+  try {
+    const localPosts = getLocalPosts();
+    const index = localPosts.findIndex((p) => p.id === id);
+    if (index !== -1) {
+      localPosts[index] = merged;
+      saveLocalPosts(localPosts);
+      localUpdated = true;
+    }
+  } catch (e) {}
+
+  if (!dbUpdated && !localUpdated && dbError) {
+    throw new Error(`ไม่สามารถอัปเดตบทความได้ (${dbError}) กรุณาตรวจสอบว่าได้สร้างตาราง posts ใน Supabase แล้วหรือยัง`);
   }
 
   return merged;
@@ -382,18 +402,35 @@ export async function updatePost(id, updates) {
 
 // 6. DELETE POST
 export async function deletePostById(id) {
+  let dbDeleted = false;
+  let dbError = null;
+
   if (isSupabaseConfigured && supabase) {
     try {
       const { error } = await supabase.from("posts").delete().eq("id", id);
-      if (error) throw error;
+      if (error) {
+        dbError = error.message;
+        throw error;
+      }
+      dbDeleted = true;
     } catch (err) {
+      dbError = err.message;
       console.warn("Supabase deletePost error, falling back to local:", err.message);
     }
   }
 
-  const localPosts = getLocalPosts();
-  const filtered = localPosts.filter((p) => p.id !== id);
-  saveLocalPosts(filtered);
+  let localDeleted = false;
+  try {
+    const localPosts = getLocalPosts();
+    const filtered = localPosts.filter((p) => p.id !== id);
+    saveLocalPosts(filtered);
+    localDeleted = true;
+  } catch (e) {}
+
+  if (!dbDeleted && !localDeleted && dbError) {
+    throw new Error(`ไม่สามารถลบบทความได้ (${dbError}) กรุณาตรวจสอบว่าได้สร้างตาราง posts ใน Supabase แล้วหรือยัง`);
+  }
+
   return true;
 }
 

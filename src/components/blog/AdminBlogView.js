@@ -90,11 +90,19 @@ export default function AdminBlogView() {
           type: "success",
           text: `เปลี่ยนสถานะเป็น ${newStatus === "published" ? "เผยแพร่แล้ว" : "แบบร่าง"} เรียบร้อยแล้ว`,
         });
+      } else {
+        setActionMessage({
+          type: "error",
+          text: data.message || "ไม่สามารถเปลี่ยนสถานะได้ กรุณาตรวจสอบว่าสร้างตารางใน Supabase หรือยัง",
+        });
       }
     } catch (err) {
-      alert("Error updating status");
+      setActionMessage({
+        type: "error",
+        text: "เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์",
+      });
     } finally {
-      setTimeout(() => setActionMessage(null), 4000);
+      setTimeout(() => setActionMessage(null), 6000);
     }
   };
 
@@ -108,11 +116,19 @@ export default function AdminBlogView() {
       if (data.success) {
         setPosts((prev) => prev.filter((p) => p.id !== id));
         setActionMessage({ type: "success", text: "ลบบทความเรียบร้อยแล้ว" });
+      } else {
+        setActionMessage({
+          type: "error",
+          text: data.message || "ไม่สามารถลบบทความได้ กรุณาตรวจสอบว่าสร้างตารางใน Supabase หรือยัง",
+        });
       }
     } catch (e) {
-      alert("Error deleting post");
+      setActionMessage({
+        type: "error",
+        text: "เกิดข้อผิดพลาดในการลบบทความ",
+      });
     } finally {
-      setTimeout(() => setActionMessage(null), 4000);
+      setTimeout(() => setActionMessage(null), 6000);
     }
   };
 
