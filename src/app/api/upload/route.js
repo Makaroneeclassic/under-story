@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import path from "path";
 import fs from "fs";
+import sharp from "sharp";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(request) {
   try {
@@ -16,24 +19,56 @@ export async function POST(request) {
     }
 
     const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    const inputBuffer = Buffer.from(bytes);
 
-    // Sanitize filename
+    if (inputBuffer.length === 0) {
+      return NextResponse.json(
+        { success: false, message: "Uploaded file is empty" },
+        { status: 400 }
+      );
+    }
+
+    // 1. Auto-convert image to WebP with Sharp
+    // - Auto rotate using EXIF metadata
+    // - Resize max width/height to 2048px (high-res for 4K/retina while keeping size small)
+    // - WebP quality 82 (optimal balance of clarity and small file size)
+    let webpBuffer;
+    try {
+      webpBuffer = await sharp(inputBuffer)
+        .rotate()
+        .resize({
+          width: 2048,
+          height: 2048,
+          fit: "inside",
+          withoutEnlargement: true,
+        })
+        .webp({
+          quality: 82,
+          effort: 4,
+        })
+        .toBuffer();
+    } catch (conversionErr) {
+      console.warn("Sharp WebP conversion warning:", conversionErr);
+      webpBuffer = inputBuffer;
+    }
+
+    // 2. Generate sanitized unique filename with .webp extension
     const originalName = file.name || "image.jpg";
-    const extension = path.extname(originalName) || ".jpg";
-    const baseName = path
-      .basename(originalName, extension)
-      .replace(/[^a-zA-Z0-9_-]/g, "_")
-      .substring(0, 30);
-    const uniqueFileName = `${Date.now()}_${baseName}${extension}`;
+    const ext = path.extname(originalName);
+    const baseName =
+      path
+        .basename(originalName, ext)
+        .replace(/[^a-zA-Z0-9_-]/g, "_")
+        .substring(0, 35) || "image";
+    const uniqueFileName = `${Date.now()}_${baseName}.webp`;
 
-    // 1. Try upload to Supabase Storage Bucket ('blog-assets' or 'public')
+    // 3. Try upload to Supabase Storage Bucket ('blog-assets')
     if (isSupabaseConfigured && supabase) {
       try {
         const { data, error } = await supabase.storage
           .from("blog-assets")
-          .upload(uniqueFileName, buffer, {
-            contentType: file.type || "image/jpeg",
+          .upload(uniqueFileName, webpBuffer, {
+            contentType: "image/webp",
             upsert: true,
           });
 
@@ -47,28 +82,60 @@ export async function POST(request) {
               success: true,
               url: publicUrlData.publicUrl,
               fileName: uniqueFileName,
+              format: "webp",
+              storage: "supabase",
             });
           }
+        } else if (error) {
+          console.warn("Supabase storage upload failed:", error.message || error);
         }
       } catch (storageErr) {
-        console.warn("Supabase storage upload failed, saving to local public/uploads:", storageErr);
+        console.warn("Supabase storage upload error:", storageErr.message || storageErr);
       }
     }
 
-    // 2. Fallback to public/uploads
-    const uploadsDir = path.join(process.cwd(), "public", "uploads");
-    if (!fs.existsSync(uploadsDir)) {
-      fs.mkdirSync(uploadsDir, { recursive: true });
+    // 4. Safe Fallback Handling
+    // Vercel serverless has a read-only filesystem (/var/task). Calling mkdirSync throws ENOENT/EROFS.
+    const isServerlessReadOnly =
+      Boolean(process.env.VERCEL) ||
+      process.env.NODE_ENV === "production" ||
+      process.env.AWS_LAMBDA_FUNCTION_NAME;
+
+    if (!isServerlessReadOnly) {
+      // Local development: save to public/uploads
+      try {
+        const uploadsDir = path.join(process.cwd(), "public", "uploads");
+        if (!fs.existsSync(uploadsDir)) {
+          fs.mkdirSync(uploadsDir, { recursive: true });
+        }
+
+        const filePath = path.join(uploadsDir, uniqueFileName);
+        fs.writeFileSync(filePath, webpBuffer);
+
+        return NextResponse.json({
+          success: true,
+          url: `/uploads/${uniqueFileName}`,
+          fileName: uniqueFileName,
+          format: "webp",
+          storage: "local",
+        });
+      } catch (localWriteErr) {
+        console.warn("Local filesystem write failed, using data URL fallback:", localWriteErr);
+      }
     }
 
-    const filePath = path.join(uploadsDir, uniqueFileName);
-    fs.writeFileSync(filePath, buffer);
+    // Production / Vercel fallback: WebP Base64 Data URL so upload NEVER crashes
+    const base64Data = webpBuffer.toString("base64");
+    const dataUrl = `data:image/webp;base64,${base64Data}`;
 
-    const publicUrl = `/uploads/${uniqueFileName}`;
     return NextResponse.json({
       success: true,
-      url: publicUrl,
+      url: dataUrl,
       fileName: uniqueFileName,
+      format: "webp",
+      storage: "inline-webp",
+      warning:
+        "Supabase bucket 'blog-assets' is not active yet. Converted to WebP and saved inline.",
     });
   } catch (error) {
     console.error("Upload error:", error);
