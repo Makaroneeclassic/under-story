@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import path from "path";
 import fs from "fs";
-import sharp from "sharp";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 30;
 
 export async function POST(request) {
   try {
@@ -19,41 +19,17 @@ export async function POST(request) {
     }
 
     const bytes = await file.arrayBuffer();
-    const inputBuffer = Buffer.from(bytes);
+    let buffer = Buffer.from(bytes);
 
-    if (inputBuffer.length === 0) {
+    if (buffer.length === 0) {
       return NextResponse.json(
         { success: false, message: "Uploaded file is empty" },
         { status: 400 }
       );
     }
 
-    // 1. Auto-convert image to WebP with Sharp
-    // - Auto rotate using EXIF metadata
-    // - Resize max width/height to 2048px (high-res for 4K/retina while keeping size small)
-    // - WebP quality 82 (optimal balance of clarity and small file size)
-    let webpBuffer;
-    try {
-      webpBuffer = await sharp(inputBuffer)
-        .rotate()
-        .resize({
-          width: 2048,
-          height: 2048,
-          fit: "inside",
-          withoutEnlargement: true,
-        })
-        .webp({
-          quality: 82,
-          effort: 4,
-        })
-        .toBuffer();
-    } catch (conversionErr) {
-      console.warn("Sharp WebP conversion warning:", conversionErr);
-      webpBuffer = inputBuffer;
-    }
-
-    // 2. Generate sanitized unique filename with .webp extension
-    const originalName = file.name || "image.jpg";
+    // 1. Sanitize file name & ensure .webp extension
+    const originalName = file.name || "image.webp";
     const ext = path.extname(originalName);
     const baseName =
       path
@@ -62,12 +38,38 @@ export async function POST(request) {
         .substring(0, 35) || "image";
     const uniqueFileName = `${Date.now()}_${baseName}.webp`;
 
+    // 2. Try server-side Sharp conversion/optimization if sharp native module is available
+    // Wrapped in dynamic try/catch so native binary missing on Linux/Vercel never crashes
+    try {
+      const sharpModule = await import("sharp");
+      const sharp = sharpModule.default || sharpModule;
+      if (typeof sharp === "function") {
+        buffer = await sharp(buffer)
+          .rotate()
+          .resize({
+            width: 2048,
+            height: 2048,
+            fit: "inside",
+            withoutEnlargement: true,
+          })
+          .webp({
+            quality: 82,
+            effort: 4,
+          })
+          .toBuffer();
+      }
+    } catch (sharpErr) {
+      // If sharp is unavailable in serverless environment, the client-side canvas
+      // already converted the image to WebP, so we can safely continue with buffer!
+      console.warn("Server Sharp processing skipped:", sharpErr.message);
+    }
+
     // 3. Try upload to Supabase Storage Bucket ('blog-assets')
     if (isSupabaseConfigured && supabase) {
       try {
         const { data, error } = await supabase.storage
           .from("blog-assets")
-          .upload(uniqueFileName, webpBuffer, {
+          .upload(uniqueFileName, buffer, {
             contentType: "image/webp",
             upsert: true,
           });
@@ -87,19 +89,19 @@ export async function POST(request) {
             });
           }
         } else if (error) {
-          console.warn("Supabase storage upload failed:", error.message || error);
+          console.warn("Supabase storage bucket upload notice:", error.message || error);
         }
       } catch (storageErr) {
-        console.warn("Supabase storage upload error:", storageErr.message || storageErr);
+        console.warn("Supabase storage upload notice:", storageErr.message || storageErr);
       }
     }
 
     // 4. Safe Fallback Handling
-    // Vercel serverless has a read-only filesystem (/var/task). Calling mkdirSync throws ENOENT/EROFS.
+    // On Vercel / serverless runtime, filesystem (/var/task) is strictly read-only.
     const isServerlessReadOnly =
       Boolean(process.env.VERCEL) ||
       process.env.NODE_ENV === "production" ||
-      process.env.AWS_LAMBDA_FUNCTION_NAME;
+      Boolean(process.env.AWS_LAMBDA_FUNCTION_NAME);
 
     if (!isServerlessReadOnly) {
       // Local development: save to public/uploads
@@ -110,7 +112,7 @@ export async function POST(request) {
         }
 
         const filePath = path.join(uploadsDir, uniqueFileName);
-        fs.writeFileSync(filePath, webpBuffer);
+        fs.writeFileSync(filePath, buffer);
 
         return NextResponse.json({
           success: true,
@@ -120,12 +122,12 @@ export async function POST(request) {
           storage: "local",
         });
       } catch (localWriteErr) {
-        console.warn("Local filesystem write failed, using data URL fallback:", localWriteErr);
+        console.warn("Local filesystem write failed, using fallback:", localWriteErr.message);
       }
     }
 
-    // Production / Vercel fallback: WebP Base64 Data URL so upload NEVER crashes
-    const base64Data = webpBuffer.toString("base64");
+    // Production / Vercel fallback: WebP Base64 Data URL (safe & light ~100-250KB)
+    const base64Data = buffer.toString("base64");
     const dataUrl = `data:image/webp;base64,${base64Data}`;
 
     return NextResponse.json({
@@ -134,13 +136,11 @@ export async function POST(request) {
       fileName: uniqueFileName,
       format: "webp",
       storage: "inline-webp",
-      warning:
-        "Supabase bucket 'blog-assets' is not active yet. Converted to WebP and saved inline.",
     });
   } catch (error) {
-    console.error("Upload error:", error);
+    console.error("Upload handler caught error:", error);
     return NextResponse.json(
-      { success: false, message: "Upload failed: " + error.message },
+      { success: false, message: "Upload failed: " + (error.message || "Unknown error") },
       { status: 500 }
     );
   }

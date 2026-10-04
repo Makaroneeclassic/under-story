@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { convertImageToWebP } from "@/lib/imageOptimizer";
 
 export default function WysiwygEditor({ value = "", onChange, placeholder = "เริ่มเขียนเนื้อหาบทความที่นี่..." }) {
   const editorRef = useRef(null);
@@ -51,14 +52,24 @@ export default function WysiwygEditor({ value = "", onChange, placeholder = "เ
 
     setUploadingImage(true);
     try {
+      // Auto convert to WebP in browser before upload
+      const webpFile = await convertImageToWebP(file);
+
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", webpFile);
 
       const res = await fetch("/api/upload", {
         method: "POST",
         body: formData,
       });
-      const data = await res.json();
+      const text = await res.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error(`เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง (${res.status})`);
+      }
+
       if (data.success && data.url) {
         setImageUrl(data.url);
       } else {

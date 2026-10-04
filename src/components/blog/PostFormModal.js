@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import WysiwygEditor from "./WysiwygEditor";
 import SeoMetaBox from "./SeoMetaBox";
+import { convertImageToWebP } from "@/lib/imageOptimizer";
 
 export default function PostFormModal({ post = null, isOpen, onClose, onSaved }) {
   const isEditing = Boolean(post?.id);
@@ -170,11 +171,21 @@ export default function PostFormModal({ post = null, isOpen, onClose, onSaved })
 
     setUploadingFeatured(true);
     try {
+      // Auto convert to WebP in browser before upload (saves bandwidth & prevents Vercel 4.5MB limit)
+      const webpFile = await convertImageToWebP(file);
+
       const form = new FormData();
-      form.append("file", file);
+      form.append("file", webpFile);
 
       const res = await fetch("/api/upload", { method: "POST", body: form });
-      const data = await res.json();
+      const text = await res.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error(`เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง (${res.status}): ${text.substring(0, 80)}`);
+      }
+
       if (data.success && data.url) {
         setFormData((prev) => ({
           ...prev,
@@ -182,7 +193,7 @@ export default function PostFormModal({ post = null, isOpen, onClose, onSaved })
           og_image: prev.og_image ? prev.og_image : data.url,
         }));
       } else {
-        alert("Upload error: " + data.message);
+        alert("Upload error: " + (data.message || "Unknown error"));
       }
     } catch (err) {
       alert("Upload failed: " + err.message);

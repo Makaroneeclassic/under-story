@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { convertImageToWebP } from "@/lib/imageOptimizer";
 
 export default function SeoMetaBox({ postData = {}, onChange, content = "", featuredImage = "" }) {
   const [activeTab, setActiveTab] = useState("general"); // "general" | "social" | "advanced"
@@ -98,15 +99,25 @@ export default function SeoMetaBox({ postData = {}, onChange, content = "", feat
 
     setUploadingOgImage(true);
     try {
+      // Auto convert to WebP in browser before upload
+      const webpFile = await convertImageToWebP(file);
+
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", webpFile);
 
       const res = await fetch("/api/upload", { method: "POST", body: formData });
-      const data = await res.json();
+      const text = await res.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error(`เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง (${res.status})`);
+      }
+
       if (data.success && data.url) {
         updateField("og_image", data.url);
       } else {
-        alert("Upload error: " + data.message);
+        alert("Upload error: " + (data.message || "Unknown error"));
       }
     } catch (err) {
       alert("Upload failed: " + err.message);
