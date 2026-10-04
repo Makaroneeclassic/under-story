@@ -2,6 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { getAllPosts } from "@/lib/postsStore";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata = {
   title: "Understory Journal | บทความ ไอเดีย และสาระน่ารู้สำหรับงานแต่งงาน",
   description:

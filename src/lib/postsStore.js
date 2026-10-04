@@ -234,13 +234,31 @@ export async function getAllPosts({ status = "ALL", category = "ALL", search = "
 export async function getPostBySlug(slug) {
   if (!slug) return null;
 
+  let decodedSlug = slug;
+  try {
+    decodedSlug = decodeURIComponent(slug);
+  } catch (e) {
+    decodedSlug = slug;
+  }
+
   if (isSupabaseConfigured && supabase) {
     try {
-      const { data, error } = await supabase
+      // 1. Try decoded slug (Thai UTF-8)
+      let { data, error } = await supabase
         .from("posts")
         .select("*")
-        .eq("slug", slug)
+        .eq("slug", decodedSlug)
         .maybeSingle();
+
+      // 2. If not found and slug was encoded, try raw slug
+      if (!data && decodedSlug !== slug) {
+        const res = await supabase
+          .from("posts")
+          .select("*")
+          .eq("slug", slug)
+          .maybeSingle();
+        data = res.data;
+      }
 
       if (error) throw error;
       // If table exists and query succeeded, return result or null
@@ -251,7 +269,9 @@ export async function getPostBySlug(slug) {
   }
 
   const posts = getLocalPosts();
-  return posts.find((p) => p.slug === slug) || null;
+  return (
+    posts.find((p) => p.slug === decodedSlug || p.slug === slug) || null
+  );
 }
 
 // 3. GET POST BY ID
@@ -438,11 +458,22 @@ export async function deletePostById(id) {
 export async function incrementPostViews(slug) {
   if (!slug) return;
   
+  let decodedSlug = slug;
+  try {
+    decodedSlug = decodeURIComponent(slug);
+  } catch (e) {
+    decodedSlug = slug;
+  }
+  
   if (isSupabaseConfigured && supabase) {
     try {
-      await supabase.rpc("increment_post_views", { target_slug: slug }).catch(async () => {
+      await supabase.rpc("increment_post_views", { target_slug: decodedSlug }).catch(async () => {
         // Fallback: regular update
-        const { data } = await supabase.from("posts").select("id, views_count").eq("slug", slug).maybeSingle();
+        let { data } = await supabase.from("posts").select("id, views_count").eq("slug", decodedSlug).maybeSingle();
+        if (!data && decodedSlug !== slug) {
+          const res = await supabase.from("posts").select("id, views_count").eq("slug", slug).maybeSingle();
+          data = res.data;
+        }
         if (data) {
           await supabase.from("posts").update({ views_count: (data.views_count || 0) + 1 }).eq("id", data.id);
         }
@@ -454,7 +485,7 @@ export async function incrementPostViews(slug) {
 
   try {
     const localPosts = getLocalPosts();
-    const post = localPosts.find((p) => p.slug === slug);
+    const post = localPosts.find((p) => p.slug === decodedSlug || p.slug === slug);
     if (post) {
       post.views_count = (post.views_count || 0) + 1;
       saveLocalPosts(localPosts);

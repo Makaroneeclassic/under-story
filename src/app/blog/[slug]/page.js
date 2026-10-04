@@ -3,10 +3,18 @@ import Link from "next/link";
 import Image from "next/image";
 import { getPostBySlug, getAllPosts, incrementPostViews } from "@/lib/postsStore";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 // Dynamic SEO Metadata (Next.js 16)
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  let decodedSlug = slug;
+  try {
+    decodedSlug = decodeURIComponent(slug);
+  } catch (e) {}
+
+  const post = await getPostBySlug(decodedSlug);
 
   if (!post || post.status !== "published") {
     return {
@@ -85,19 +93,29 @@ function injectHeadingIds(htmlContent) {
 
 export default async function BlogPostDetailPage({ params }) {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  let decodedSlug = slug;
+  try {
+    decodedSlug = decodeURIComponent(slug);
+  } catch (e) {}
+
+  const post = await getPostBySlug(decodedSlug);
 
   if (!post || post.status !== "published") {
     notFound();
   }
 
   // Increment view count in background
-  incrementPostViews(slug);
+  incrementPostViews(decodedSlug);
 
   // Fetch related posts (same category, excluding current post)
   const allPosts = await getAllPosts({ status: "published" });
   const relatedPosts = allPosts
-    .filter((p) => p.slug !== slug && (p.category === post.category || allPosts.length <= 4))
+    .filter(
+      (p) =>
+        p.slug !== decodedSlug &&
+        p.slug !== slug &&
+        (p.category === post.category || allPosts.length <= 4)
+    )
     .slice(0, 3);
 
   const headings = extractHeadings(post.content);
