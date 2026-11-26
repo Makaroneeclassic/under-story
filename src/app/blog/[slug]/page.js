@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { after } from "next/server";
 import Link from "next/link";
 import Image from "next/image";
 import { getPostBySlug, getAllPosts, incrementPostViews } from "@/lib/postsStore";
@@ -104,8 +105,8 @@ export default async function BlogPostDetailPage({ params }) {
     notFound();
   }
 
-  // Increment view count in background
-  incrementPostViews(decodedSlug);
+  // Increment view count after the response is sent (kept alive on Vercel via after())
+  after(() => incrementPostViews(decodedSlug));
 
   // Fetch related posts (same category, excluding current post)
   const allPosts = await getAllPosts({ status: "published" });

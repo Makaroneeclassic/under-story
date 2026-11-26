@@ -165,3 +165,22 @@ USING (true);
 CREATE POLICY "Allow public delete on posts"
 ON public.posts FOR DELETE
 USING (true);
+
+-- =========================================================
+-- 6. ATOMIC VIEW COUNTER FOR BLOG POSTS
+-- =========================================================
+-- Called from src/lib/postsStore.js -> incrementPostViews()
+-- Returns the new views_count (NULL if slug not found)
+CREATE OR REPLACE FUNCTION public.increment_post_views(target_slug TEXT)
+RETURNS INTEGER
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+    UPDATE public.posts
+    SET views_count = COALESCE(views_count, 0) + 1
+    WHERE slug = target_slug
+    RETURNING views_count;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.increment_post_views(TEXT) TO anon, authenticated, service_role;

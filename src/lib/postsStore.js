@@ -467,19 +467,31 @@ export async function incrementPostViews(slug) {
   
   if (isSupabaseConfigured && supabase) {
     try {
-      await supabase.rpc("increment_post_views", { target_slug: decodedSlug }).catch(async () => {
-        // Fallback: regular update
+      // 1. Atomic increment via SQL function (see supabase_schema.sql).
+      //    Supabase never throws — it resolves with { error } — so check it explicitly.
+      const { data: rpcCount, error: rpcError } = await supabase.rpc("increment_post_views", {
+        target_slug: decodedSlug,
+      });
+
+      if (rpcError || rpcCount === null) {
+        if (rpcError) console.warn("increment_post_views RPC unavailable, using fallback:", rpcError.message);
+
+        // 2. Fallback: read-then-update
         let { data } = await supabase.from("posts").select("id, views_count").eq("slug", decodedSlug).maybeSingle();
         if (!data && decodedSlug !== slug) {
           const res = await supabase.from("posts").select("id, views_count").eq("slug", slug).maybeSingle();
           data = res.data;
         }
         if (data) {
-          await supabase.from("posts").update({ views_count: (data.views_count || 0) + 1 }).eq("id", data.id);
+          const { error: updateError } = await supabase
+            .from("posts")
+            .update({ views_count: (data.views_count || 0) + 1 })
+            .eq("id", data.id);
+          if (updateError) console.error("Failed to increment post views:", updateError.message);
         }
-      });
+      }
     } catch (e) {
-      // Ignore background counter errors
+      console.error("incrementPostViews error:", e);
     }
   }
 
