@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 
 function HallCard({ num, phase, phaseSub, title, concept, desc, imgSrc, treeSrc, alt, delay, rotateClass, containerClass }) {
   const [isRevealed, setIsRevealed] = useState(false);
@@ -248,63 +250,7 @@ export default function Home() {
 
   return (
     <>
-      {/* TopAppBar */}
-      <header className="docked full-width top-0 sticky z-50 bg-[#F1F0EB]/90 backdrop-blur-md border-b border-[#9C8B72]/20 flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 transition-all duration-300">
-        <div className="flex items-center gap-4">
-          <nav className="hidden md:flex gap-8">
-            <a
-              className="font-label-caps text-label-caps text-[#000000] font-bold border-b-2 border-[#665340] py-1 tracking-widest"
-              href="#venue"
-            >
-              THE VENUE
-            </a>
-            <a
-              className="font-label-caps text-label-caps text-[#4A4742] hover:text-[#000000] transition-colors tracking-widest py-1"
-              href="#halls"
-            >
-              HALLS
-            </a>
-            <a
-              className="font-label-caps text-label-caps text-[#4A4742] hover:text-[#000000] transition-colors tracking-widest py-1"
-              href="#floor-plans"
-            >
-              FLOOR PLANS
-            </a>
-            <Link
-              className="font-label-caps text-label-caps text-[#4A4742] hover:text-[#000000] transition-colors tracking-widest py-1"
-              href="/gallery"
-            >
-              GALLERY
-            </Link>
-            <Link
-              className="font-label-caps text-label-caps text-[#4A4742] hover:text-[#000000] transition-colors tracking-widest py-1"
-              href="/blog"
-            >
-              BLOG
-            </Link>
-          </nav>
-        </div>
-        <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center">
-          <a href="#" className="flex items-center">
-            <Image
-              src="/logo_understory_authentic.webp"
-              alt="Understory Logo"
-              width={160}
-              height={70}
-              className="h-10 md:h-11 w-auto object-contain"
-              priority
-            />
-          </a>
-        </div>
-        <div className="flex items-center gap-4">
-          <a
-            href="#contact"
-            className="bg-[#000000] text-[#F1F0EB] hover:bg-[#665340] py-2.5 px-6 rounded-md font-label-caps text-label-caps tracking-widest transition-all duration-300 cursor-pointer shadow-sm"
-          >
-            BOOK A VISIT
-          </a>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* Navigation Drawer (Side) */}
       <div
@@ -706,45 +652,7 @@ export default function Home() {
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="w-full py-16 px-margin-mobile md:px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-8 bg-[#ECEAE3] border-t border-[#9C8B72]/30">
-        <div className="flex flex-col items-center md:items-start gap-3">
-          <Image
-            src="/logo_understory_authentic.webp"
-            alt="Understory Logo"
-            width={150}
-            height={65}
-            className="h-10 w-auto object-contain"
-          />
-          <p className="font-body-md text-sm text-[#4A4742]">
-            © 2026 Understory. All rights reserved.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center justify-center md:justify-end gap-8">
-          <Link
-            className="font-body-md text-sm text-[#4A4742] hover:text-[#000000] transition-colors"
-            href="/blog"
-          >
-            Blog
-          </Link>
-          <a
-            className="font-body-md text-sm text-[#4A4742] hover:text-[#000000] transition-colors"
-            href="https://www.instagram.com/understory.venue/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Instagram
-          </a>
-          <a
-            className="font-body-md text-sm text-[#4A4742] hover:text-[#000000] transition-colors"
-            href="https://www.facebook.com/profile.php?id=61593297895519"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Facebook
-          </a>
-        </div>
-      </footer>
+      <SiteFooter />
     </>
   );
 }

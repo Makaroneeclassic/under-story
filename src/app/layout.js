@@ -1,34 +1,16 @@
-import { Cormorant_Garamond, Libre_Caslon_Text, DM_Sans, Noto_Sans_Thai, Noto_Serif_Thai } from "next/font/google";
+import { Noto_Sans_Thai, Noto_Serif_Thai } from "next/font/google";
 import "./globals.css";
 import TrackingScripts from "@/components/TrackingScripts";
 
-const cormorantGaramond = Cormorant_Garamond({
-  variable: "--font-cormorant",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  style: ["normal", "italic"],
-});
-
-const libreCaslonText = Libre_Caslon_Text({
-  variable: "--font-libre-caslon-text",
-  subsets: ["latin"],
-  weight: ["400"],
-});
-
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
+// Two type families site-wide: serif for headings, Thai sans for body text
+const notoSerifThai = Noto_Serif_Thai({
+  variable: "--font-noto-serif-thai",
+  subsets: ["thai", "latin"],
+  weight: ["400", "500", "600"],
 });
 
 const notoSansThai = Noto_Sans_Thai({
   variable: "--font-noto-sans-thai",
-  subsets: ["thai", "latin"],
-  weight: ["300", "400", "500", "600", "700"],
-});
-
-const notoSerifThai = Noto_Serif_Thai({
-  variable: "--font-noto-serif-thai",
   subsets: ["thai", "latin"],
   weight: ["300", "400", "500", "600", "700"],
 });
@@ -51,7 +33,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="th"
-      className={`${cormorantGaramond.variable} ${libreCaslonText.variable} ${dmSans.variable} ${notoSansThai.variable} ${notoSerifThai.variable} scroll-smooth`}
+      className={`${notoSerifThai.variable} ${notoSansThai.variable} scroll-smooth`}
     >
       <head>
         <link

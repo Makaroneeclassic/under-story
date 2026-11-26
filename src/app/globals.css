@@ -61,15 +61,17 @@
   --radius-xl: 0.75rem;
   --radius-full: 9999px;
 
-  /* Typography Fonts */
-  --font-serif-heading: var(--font-cormorant), var(--font-noto-serif-thai), var(--font-libre-caslon-text), serif;
-  --font-headline-xl: var(--font-cormorant), var(--font-noto-serif-thai), var(--font-libre-caslon-text), serif;
-  --font-headline-lg: var(--font-cormorant), var(--font-noto-serif-thai), var(--font-libre-caslon-text), serif;
-  --font-headline-md: var(--font-cormorant), var(--font-noto-serif-thai), var(--font-libre-caslon-text), serif;
-  --font-headline-lg-mobile: var(--font-cormorant), var(--font-noto-serif-thai), var(--font-libre-caslon-text), serif;
-  --font-label-caps: var(--font-work-sans), var(--font-noto-sans-thai), sans-serif;
-  --font-body-lg: var(--font-dm-sans), var(--font-noto-sans-thai), sans-serif;
-  --font-body-md: var(--font-dm-sans), var(--font-noto-sans-thai), sans-serif;
+  /* Typography: two families site-wide */
+  --font-serif: var(--font-noto-serif-thai), Georgia, serif;
+  --font-sans: var(--font-noto-sans-thai), system-ui, sans-serif;
+  --font-serif-heading: var(--font-serif);
+  --font-headline-xl: var(--font-serif);
+  --font-headline-lg: var(--font-serif);
+  --font-headline-md: var(--font-serif);
+  --font-headline-lg-mobile: var(--font-serif);
+  --font-label-caps: var(--font-sans);
+  --font-body-lg: var(--font-sans);
+  --font-body-md: var(--font-sans);
 
   /* Shadow Ambient */
   --shadow-ambient: 0 10px 30px -10px rgba(102, 83, 64, 0.08);
@@ -162,7 +164,7 @@
 }
 
 body {
-  font-family: var(--font-dm-sans), var(--font-noto-sans-thai), sans-serif;
+  font-family: var(--font-sans);
   min-height: max(884px, 100dvh);
   background-color: #F1F0EB;
   color: #000000;
