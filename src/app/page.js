@@ -298,15 +298,6 @@ export default function Home() {
         </div>
         <div className="flex items-center gap-4">
           <a
-            href="/presskit/understory-booklet.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            download="UnderStory-Booklet.pdf"
-            className="hidden md:block font-label-caps text-label-caps text-[#4A4742] hover:text-[#000000] transition-colors mr-4 cursor-pointer"
-          >
-            PRESS KIT
-          </a>
-          <a
             href="#contact"
             className="bg-[#000000] text-[#F1F0EB] hover:bg-[#665340] py-2.5 px-6 rounded-md font-label-caps text-label-caps tracking-widest transition-all duration-300 cursor-pointer shadow-sm"
           >
@@ -399,18 +390,6 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
                 Contact
-              </a>
-              <a
-                className="text-[#4A4742] hover:text-[#000000] hover:bg-[#EAE8E1] transition-all mx-3 flex items-center gap-4 px-4 py-3.5 rounded-md font-body-md"
-                href="/presskit/understory-booklet.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                download="UnderStory-Booklet.pdf"
-              >
-                <svg className="w-5 h-5 text-[#665340]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                Press Kit (PDF)
               </a>
             </div>
           </nav>
@@ -742,15 +721,6 @@ export default function Home() {
           </p>
         </div>
         <div className="flex flex-wrap items-center justify-center md:justify-end gap-8">
-          <a
-            className="font-body-md text-sm text-[#4A4742] hover:text-[#000000] transition-colors cursor-pointer"
-            href="/presskit/understory-booklet.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            download="UnderStory-Booklet.pdf"
-          >
-            Press Kit
-          </a>
           <Link
             className="font-body-md text-sm text-[#4A4742] hover:text-[#000000] transition-colors"
             href="/blog"

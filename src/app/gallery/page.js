@@ -10,7 +10,6 @@ const galleryItems = [
     title: "Mistle Hall - Open Sky Skylight",
     category: "MISTLE HALL",
     src: "/pic/08.webp",
-    aspect: "aspect-[4/5]",
     description: "Expansive circular hall where the ceiling opens directly to the sky and tree canopies.",
   },
   {
@@ -18,7 +17,6 @@ const galleryItems = [
     title: "Linden Hall - Arched Grandeur",
     category: "LINDEN HALL",
     src: "/pic/04.webp",
-    aspect: "aspect-[4/5]",
     description: "Towering limestone columns bathed in diffused natural daylight, framing sacred unions.",
   },
   {
@@ -26,7 +24,6 @@ const galleryItems = [
     title: "Willow Hall - Textured Curves",
     category: "WILLOW HALL",
     src: "/pic/02.webp",
-    aspect: "aspect-[4/3]",
     description: "An intimate sanctuary of organic curves, soft shadows, and warm architectural stone.",
   },
   {
@@ -34,7 +31,6 @@ const galleryItems = [
     title: "Canopy & Aerial Harmony",
     category: "AERIAL & ARCHITECTURE",
     src: "/pic/5-2.webp",
-    aspect: "aspect-[16/10]",
     description: "Bird's-eye architectural view of the interlocking circular pavilions nestled in nature.",
   },
   {
@@ -42,7 +38,6 @@ const galleryItems = [
     title: "The Entrance Promenade",
     category: "AERIAL & ARCHITECTURE",
     src: "/pic/01.webp",
-    aspect: "aspect-[4/5]",
     description: "Clean monolithic walkways guided by lush organic foliage leading guests into serenity.",
   },
   {
@@ -50,7 +45,6 @@ const galleryItems = [
     title: "Courtyard & Atmospheric Light",
     category: "LINDEN HALL",
     src: "/pic/03.webp",
-    aspect: "aspect-[4/3]",
     description: "Golden hour illumination reflecting across hand-carved stone walls and serene courtyards.",
   },
   {
@@ -58,7 +52,6 @@ const galleryItems = [
     title: "Evening Union Setup",
     category: "MISTLE HALL",
     src: "/pic/09.webp",
-    aspect: "aspect-[4/5]",
     description: "Nightfall ambiance with ambient warm uplighting bringing the architectural curves to life.",
   },
 ];
@@ -151,15 +144,6 @@ export default function GalleryPage() {
         </div>
 
         <div className="flex items-center gap-4">
-          <a
-            href="/presskit/understory-booklet.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            download="UnderStory-Booklet.pdf"
-            className="hidden md:block font-label-caps text-label-caps text-[#4A4742] hover:text-[#000000] transition-colors mr-4 cursor-pointer"
-          >
-            PRESS KIT
-          </a>
           <Link
             href="/#contact"
             className="bg-[#000000] text-[#F1F0EB] hover:bg-[#665340] py-2.5 px-6 rounded-md font-label-caps text-label-caps tracking-widest transition-all duration-300 cursor-pointer shadow-sm text-center"
@@ -210,7 +194,7 @@ export default function GalleryPage() {
               onClick={() => openLightbox(idx)}
               className="group cursor-pointer flex flex-col bg-[#ECEAE3] rounded-xl overflow-hidden border border-[#9C8B72]/30 hover:border-[#665340] transition-all duration-500 hover:shadow-xl"
             >
-              <div className={`relative w-full ${item.aspect} overflow-hidden bg-[#E7E3DA]`}>
+              <div className="relative w-full aspect-square overflow-hidden bg-[#E7E3DA]">
                 <Image
                   src={item.src}
                   alt={item.title}
@@ -353,15 +337,6 @@ export default function GalleryPage() {
           </p>
         </div>
         <div className="flex flex-wrap items-center justify-center md:justify-end gap-8">
-          <a
-            className="font-body-md text-sm text-[#4A4742] hover:text-[#000000] transition-colors cursor-pointer"
-            href="/presskit/understory-booklet.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            download="UnderStory-Booklet.pdf"
-          >
-            Press Kit
-          </a>
           <a
             className="font-body-md text-sm text-[#4A4742] hover:text-[#000000] transition-colors"
             href="https://www.instagram.com/understory.venue/"
